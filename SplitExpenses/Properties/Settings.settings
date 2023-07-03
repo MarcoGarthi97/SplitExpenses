@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SplitExpenses.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PathCredentials" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Users\marco\source\repos\SplitExpenses\MyCredentials</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

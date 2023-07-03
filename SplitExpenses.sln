@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitExpenses", "SplitExpenses\SplitExpenses.csproj", "{7D493B63-2E55-46EC-86BD-BB9ED67AC44E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D493B63-2E55-46EC-86BD-BB9ED67AC44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D493B63-2E55-46EC-86BD-BB9ED67AC44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D493B63-2E55-46EC-86BD-BB9ED67AC44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D493B63-2E55-46EC-86BD-BB9ED67AC44E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94BE20E6-2DB9-4877-8782-4419E37412F5}
+	EndGlobalSection
+EndGlobal
