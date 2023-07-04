@@ -26,5 +26,20 @@ namespace SplitExpenses.Controllers
 
             return View();
         }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        public ActionResult Accounts()
+        {
+            return View();
+        }
+
+        public ActionResult Expenses()
+        {
+            return View();
+        }
     }
 }

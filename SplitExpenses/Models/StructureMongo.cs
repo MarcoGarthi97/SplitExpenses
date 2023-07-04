@@ -47,11 +47,12 @@ namespace SplitExpenses.Models
         public double Balance { get; set; }
     }
 
-    public class Expenses
+    public class Expense
     {
         [BsonIgnoreIfDefault]
         public ObjectId _Id { get; set; }
         public int FatherId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
         public DateTime Date { get; set; }
