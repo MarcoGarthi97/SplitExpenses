@@ -14,7 +14,7 @@ namespace SplitExpenses.Controllers
             try
             {
                 if (!Authentication())
-                    return Json("franco");
+                    return Json("");
 
                 var mongo = new Mongo();
                 var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username);
@@ -23,7 +23,7 @@ namespace SplitExpenses.Controllers
             }
             catch (Exception ex)
             {
-                return Json(null);
+                return Json("");
             }
         }
 
