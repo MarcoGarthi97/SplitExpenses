@@ -21,6 +21,12 @@ namespace SplitExpenses.Models
         public string Country { get; set; }
         public string LevelUser { get; set; }
 
+        public User(string username, string password)
+        {
+            Username = username;
+            Password = password;
+        }
+
         public User(string username, string password, string email, string name, DateTime birthday, string gender, string phone, string country, string levelUser)
         {
             Username = username;

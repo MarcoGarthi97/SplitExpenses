@@ -8,7 +8,7 @@ using System.Web;
 
 namespace SplitExpenses.Models
 {
-    public class MongoDB
+    public class Mongo
     {
         private string connectionString = File.ReadAllText(Properties.Settings.Default.PathCredentials + @"\Mongo.txt");
         private IMongoDatabase GetDatabase()
@@ -30,7 +30,7 @@ namespace SplitExpenses.Models
                 var filter = Builders<User>.Filter.Eq(x => x.Username, username);
                 filter &= Builders<User>.Filter.Eq(x => x.Password, password);
 
-                var user = users.Find(filter).FirstOrDefault();
+                var user = users.Find(x => x.Username == username && x.Password == password).FirstOrDefault();
 
                 return user;
             }
@@ -53,6 +53,30 @@ namespace SplitExpenses.Models
 
                 var user = users.Find(filter).FirstOrDefault();
                 if(user != null)
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return false;
+            }
+        }
+
+        internal async Task<bool> CheckUser(string username, string password)
+        {
+            try
+            {
+                IMongoDatabase splitExpenses = GetDatabase();
+                IMongoCollection<User> users = splitExpenses.GetCollection<User>("Users");
+
+                var filter = Builders<User>.Filter.Eq(x => x.Username, username);
+                filter &= Builders<User>.Filter.Eq(x => x.Password, password);
+
+                var user = users.Find(x => x.Username == username && x.Password == password).FirstOrDefault();
+                if (user != null)
                     return true;
                 else
                     return false;

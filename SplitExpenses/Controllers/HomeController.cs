@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SplitExpenses.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -10,6 +12,7 @@ namespace SplitExpenses.Controllers
     {
         public ActionResult Index()
         {
+            Session["Logon"] = false;
             return View();
         }
 
@@ -40,6 +43,37 @@ namespace SplitExpenses.Controllers
         public ActionResult Expenses()
         {
             return View();
+        }
+
+        public ActionResult Dashboard()
+        {
+            if(Authentication())
+                return View();
+            else
+                return View("Login");
+        }
+
+        public bool Authentication()
+        {
+            try
+            {
+                if ((bool)Session["Logon"])
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public JsonResult Logon(string username, string password)
+        {
+            Mongo mongo = new Mongo();
+            var findUser = mongo.CheckUser(username, password);
+
+            return Json(findUser);
         }
     }
 }
