@@ -20,7 +20,7 @@ namespace SplitExpenses.Models
             return mongoClient.GetDatabase("SplitExpenses");
         }
 
-        internal User GetUser(string username, string password)
+        internal async Task<User> GetUser(string username, string password)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace SplitExpenses.Models
                 var filter = Builders<User>.Filter.Eq(x => x.Username, username);
                 filter &= Builders<User>.Filter.Eq(x => x.Password, password);
 
-                var user = users.Find(x => x.Username == username && x.Password == password).FirstOrDefault();
+                var user = users.Find(filter).FirstOrDefault();
 
                 return user;
             }
@@ -42,7 +42,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool CheckUser(string username)
+        internal async Task<bool> CheckUser(string username)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace SplitExpenses.Models
                 var filter = Builders<User>.Filter.Eq(x => x.Username, username);
                 filter &= Builders<User>.Filter.Eq(x => x.Password, password);
 
-                var user = users.Find(x => x.Username == username && x.Password == password).FirstOrDefault();
+                var user = users.Find(filter).FirstOrDefault();
                 if (user != null)
                     return true;
                 else
@@ -89,7 +89,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool InsertUser(User user)
+        internal async Task<bool> InsertUser(User user)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool UpdateUser(User user)
+        internal async Task<bool> UpdateUser(User user)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool DeleteUser(User user)
+        internal async Task<bool> DeleteUser(User user)
         {
             try
             {
@@ -152,14 +152,16 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal List<Account> GetAccounts()
+        internal async Task<List<Account>> GetAccounts(string username)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Account> accounts = splitExpenses.GetCollection<Account>("Account");
 
-                var listAccount = accounts.Aggregate().ToList();
+                //var filter = Builders<Account>.Filter.Eq(x => x.Users.Contains(username), username);
+
+                var listAccount = accounts.Aggregate().Match(x => x.Users.Contains(username)).ToList();
 
                 return listAccount;
             }
@@ -171,14 +173,14 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal Account GetAccount(int id)
+        internal async Task<Account> GetAccount(int id)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Account> accounts = splitExpenses.GetCollection<Account>("Account");
 
-                var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
+                var filter = Builders<Account>.Filter.Eq(x => x.Id.Machine, id);
 
                 var account = accounts.Find(filter).FirstOrDefault();
 
@@ -192,7 +194,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool InsertAccount(Account account)
+        internal async Task<bool> InsertAccount(Account account)
         {
             try
             {
@@ -211,7 +213,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool UpdateAccount(Account account)
+        internal async Task<bool> UpdateAccount(Account account)
         {
             try
             {
@@ -233,14 +235,14 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool DeleteAccount(int id)
+        internal async Task<bool> DeleteAccount(int id)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Account> accounts = splitExpenses.GetCollection<Account>("Account");
 
-                var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
+                var filter = Builders<Account>.Filter.Eq(x => x.Id.Machine, id);
 
                 var delete = accounts.DeleteOne(filter);
 
@@ -254,14 +256,14 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal Expense GetExpense(int id)
+        internal async Task<Expense> GetExpense(int id)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Expense> expenses = splitExpenses.GetCollection<Expense>("Expenses");
 
-                var filter = Builders<Expense>.Filter.Eq(x => x.Id, id);
+                var filter = Builders<Expense>.Filter.Eq(x => x.Id.Machine, id);
 
                 var expense = expenses.Find(filter).FirstOrDefault();
 
@@ -275,7 +277,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal List<Expense> GetExpenses(int fatherId)
+        internal async Task<List<Expense>> GetExpenses(int fatherId)
         {
             try
             {
@@ -296,7 +298,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool InsertExpense(Expense expense)
+        internal async Task<bool> InsertExpense(Expense expense)
         {
             try
             {
@@ -315,7 +317,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool UpdateExpense(Expense expense)
+        internal async Task<bool> UpdateExpense(Expense expense)
         {
             try
             {
@@ -337,14 +339,14 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal bool DeleteExpense(int id)
+        internal async Task<bool> DeleteExpense(int id)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Expense> expenses = splitExpenses.GetCollection<Expense>("Expenses");
 
-                var filter = Builders<Expense>.Filter.Eq(x => x.Id, id);
+                var filter = Builders<Expense>.Filter.Eq(x => x.Id.Machine, id);
 
                 var delete = expenses.DeleteOne(filter);
 

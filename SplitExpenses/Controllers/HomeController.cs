@@ -47,7 +47,8 @@ namespace SplitExpenses.Controllers
 
         public ActionResult Dashboard()
         {
-            if(Authentication())
+            return View(); //poi da togliere
+            if (Authentication())
                 return View();
             else
                 return View("Login");
@@ -66,14 +67,6 @@ namespace SplitExpenses.Controllers
             {
                 return false;
             }
-        }
-
-        public JsonResult Logon(string username, string password)
-        {
-            Mongo mongo = new Mongo();
-            var findUser = mongo.CheckUser(username, password);
-
-            return Json(findUser);
         }
     }
 }

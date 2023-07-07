@@ -10,7 +10,7 @@ namespace SplitExpenses.Models
     public class User
     {
         [BsonIgnoreIfDefault]
-        public ObjectId _Id { get; set; }
+        public ObjectId Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
@@ -44,8 +44,7 @@ namespace SplitExpenses.Models
     public class Account
     {
         [BsonIgnoreIfDefault]
-        public ObjectId _Id { get; set; }
-        public int Id { get; set; }
+        public ObjectId Id { get; set; }
         public List<string> Users { get; set; }
         public string Name { get; set; }
         public double TotalExpenses { get; set; }
@@ -56,9 +55,8 @@ namespace SplitExpenses.Models
     public class Expense
     {
         [BsonIgnoreIfDefault]
-        public ObjectId _Id { get; set; }
+        public ObjectId Id { get; set; }
         public int FatherId { get; set; }
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
         public DateTime Date { get; set; }

@@ -1,7 +1,4 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
-
+﻿
 <link rel="stylesheet" href="~/Content/Login/Login.css">
 
 <div class="div-main">
@@ -40,7 +37,7 @@
         var password = txtPassword.value
 
         $.ajax({
-            url: '@Url.Action("Logon", "Home")',
+            url: '@Url.Action("Logon", "Login")',
             type: "POST",
             data: {username: username, password: password},
             success: function(result){

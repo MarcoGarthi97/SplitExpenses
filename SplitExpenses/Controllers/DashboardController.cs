@@ -7,22 +7,24 @@ using System.Web.Mvc;
 
 namespace SplitExpenses.Controllers
 {
-    public class AuthController : Controller
+    public class DashboardController : Controller
     {
-        public JsonResult Logon(string username, string password)
+        public JsonResult GetAccounts()
         {
-            Mongo mongo = new Mongo();
-            var findUser = mongo.CheckUser(username, password);
+            try
+            {
+                if (!Authentication())
+                    return Json("franco");
 
-            return Json(findUser);
-        }
+                var mongo = new Mongo();
+                var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username);
 
-        public ActionResult Dashboard()
-        {
-            if(Authentication())
-                return View();
-            else
-                return View("Login");
+                return Json(accounts.Result);
+            }
+            catch (Exception ex)
+            {
+                return Json(null);
+            }
         }
 
         public bool Authentication()

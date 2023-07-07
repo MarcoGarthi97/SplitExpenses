@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="row">
+        <h2>Dashboard</h2>
+    </div>
+    <hr>
+    <div class="row" id="divAccounts">
+
+    </div>
+</div>
+
+
+<script>
+    const divAccounts = document.getElementById('divAccounts')
+
+    var accounts = []
+
+    GetAccounts()
+    function GetAccounts(){
+        $.ajax({
+            url: '@Url.Action("GetAccounts", "Dashboard")',
+            type: "POST",
+            success: function(result){
+                console.log(result)
+                if(result != ""){
+                    accounts = result
+                    CreateTable(accounts)
+                }
+            },
+            error: function(error){
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function CreateTable(accounts){
+        
+    }
+</script>
+
