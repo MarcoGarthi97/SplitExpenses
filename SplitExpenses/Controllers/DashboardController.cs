@@ -27,6 +27,28 @@ namespace SplitExpenses.Controllers
             }
         }
 
+        public JsonResult GetUsers(string filter)
+        {
+            try
+            {
+                if (!Authentication())
+                    return Json("");
+
+                var mongo = new Mongo();
+                var users = mongo.GetUsers(filter).Result;
+
+                var usernames = new List<string>();
+                foreach (var user in users)
+                    usernames.Add(user.Username);
+
+                return Json(usernames);
+            }
+            catch (Exception ex)
+            {
+                return Json("");
+            }
+        }
+
         public bool Authentication()
         {
             try

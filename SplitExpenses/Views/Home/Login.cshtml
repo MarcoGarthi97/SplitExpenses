@@ -1,29 +1,30 @@
-﻿
+﻿@{
+    ViewBag.Title = "Home Page";
+}
 <link rel="stylesheet" href="~/Content/Login/Login.css">
 
-<div class="div-main">
-    <main class="form-signin">
-        <form>
-            <img class="mb-4" src="~/Images/Logo.png" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+<div class="body-content container">
+    <div class="div-main">
+                <img class="mb-4" src="~/Images/Logo.png" alt="" width="72" height="57">
+                <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
-            <div class="form-floating">
-                <input type="text" class="form-control" id="username" placeholder="name@example.com">
-                <label for="floatingInput">Username</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="password" placeholder="Password">
-                <label for="floatingPassword">Password</label>
-            </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" placeholder="name@example.com">
+                    <label for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
 
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" value="remember-me"> Remember me
-                </label>
-            </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit" id="login">Sign in</button>
-        </form>
-    </main>
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit" id="login">Sign in</button>
+    </div>
+
 </div>
 
 <script>
@@ -32,18 +33,20 @@
 
     const btnLogin = document.getElementById('login')
 
-    btnLogin.addEventListener('click', function(e){
+    btnLogin.addEventListener('click', function (e) {
         var username = txtUsername.value
         var password = txtPassword.value
 
         $.ajax({
             url: '@Url.Action("Logon", "Login")',
             type: "POST",
-            data: {username: username, password: password},
-            success: function(result){
+            data: { username: username, password: password },
+            success: function (result) {
                 console.log(result)
+                if (result)
+                    window.location.href = '@Url.Action("Dashboard", "Home")'
             },
-            error: function(error){
+            error: function (error) {
                 console.log(error)
             }
         })

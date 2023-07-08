@@ -42,6 +42,25 @@ namespace SplitExpenses.Models
             }
         }
 
+        internal async Task<List<User>> GetUsers(string filter)
+        {
+            try
+            {
+                IMongoDatabase splitExpenses = GetDatabase();
+                IMongoCollection<User> users = splitExpenses.GetCollection<User>("Users");
+
+                var user = users.Find(x => x.Username.Contains(filter)).FirstOrDefault();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return null;
+            }
+        }
+
         internal async Task<bool> CheckUser(string username)
         {
             try

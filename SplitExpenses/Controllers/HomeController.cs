@@ -47,7 +47,7 @@ namespace SplitExpenses.Controllers
 
         public ActionResult Dashboard()
         {
-            return View(); //poi da togliere
+            //return View(); //poi da togliere
             if (Authentication())
                 return View();
             else
@@ -58,13 +58,14 @@ namespace SplitExpenses.Controllers
         {
             try
             {
-                if ((bool)Session["Logon"])
+                if (Session["Logon"] != null && (bool)Session["Logon"])
                     return true;
                 else
                     return false;
             }
             catch (Exception ex)
             {
+                Session["Logon"] = false;
                 return false;
             }
         }

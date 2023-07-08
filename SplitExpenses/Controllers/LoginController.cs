@@ -12,11 +12,12 @@ namespace SplitExpenses.Controllers
         public JsonResult Logon(string username, string password)
         {
             Mongo mongo = new Mongo();
-            var findUser = mongo.GetUser(username, password);
+            var findUser = mongo.GetUser(username, password).Result;
 
             if(findUser != null)
             {
                 Session["InfoUser"] = findUser;
+                Session["Logon"] = true;
                 return Json(true);
             }
             else
