@@ -15,7 +15,7 @@ namespace SplitExpenses.Controllers
                 return Json("");
 
             var mongo = new Mongo();
-            var expenses = mongo.GetExpenses(((Account)Session["Account"]).Id);
+            var expenses = mongo.GetExpenses(((Account)Session["Account"]).Id).Result;
 
             return Json(expenses);
         }
