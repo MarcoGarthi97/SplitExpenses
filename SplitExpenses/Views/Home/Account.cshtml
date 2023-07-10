@@ -1,0 +1,74 @@
+Working in progress
+<div class="modal fade" id="modalAddExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalAddLabel">Add new account</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="txtName" class="form-label">Name account</label>
+                                <input type="text" class="form-control" id="txtName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="txtFilter" class="form-label">Name user</label>
+                                <input type="text" class="form-control" id="txtFilter" />
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="mb-3">
+                                <label for="selectSearch" class="form-label">Search</label>
+                                <select class="form-select" aria-label="Default select example" id="selectSearch">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <input type="button" id="btnAddUser" class="btn btn-primary" value="+"
+                                style="margin-top: 77%;" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="txtUsers" class="form-label">Users</label>
+                            <input type="text" class="form-control" id="txtUsers" readonly />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnAddAccount">Save</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        GetExpenses()
+        function GetExpenses(){
+            $.ajax({
+                    url: '@Url.Action("GetExpenses", "Account")',
+                    type: "POST",
+                    success: function (result) {
+                        if (result != "") {
+                            console.log(result)
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
+        }
+    </script>
+

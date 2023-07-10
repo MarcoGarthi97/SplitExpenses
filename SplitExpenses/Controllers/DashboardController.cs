@@ -39,9 +39,39 @@ namespace SplitExpenses.Controllers
 
                 var usernames = new List<string>();
                 foreach (var user in users)
-                    usernames.Add(user.Username);
+                    if(((User)Session["InfoUser"]).Username != user.Username)
+                        usernames.Add(user.Username);
 
                 return Json(usernames);
+            }
+            catch (Exception ex)
+            {
+                return Json("");
+            }
+        }
+
+        public JsonResult InsertAccount(string name, string stringUsers)
+        {
+            try
+            {
+                if (!Authentication())
+                    return Json("");
+
+                var users = new List<string>();
+                if (stringUsers != "")
+                    users = stringUsers.Split(';').ToList();
+                users.Add(((User)Session["InfoUser"]).Username);
+
+                var account = new Account(name, users);
+
+                var mongo = new Mongo();
+                var insert = mongo.InsertAccount(account).Result;
+
+                if (!insert)
+                    return Json("");
+
+                var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
+                return Json(accounts);
             }
             catch (Exception ex)
             {

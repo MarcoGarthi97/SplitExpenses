@@ -6,7 +6,7 @@
         <div class="col">
             <div class="float-end">
                 <input type="button" class="btn btn-primary" value="+" data-bs-toggle="modal"
-                    data-bs-target="#modalAdd" />
+                    data-bs-target="#modalAddAccount" />
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="modalAddAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark">
@@ -66,30 +66,33 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="txtUsers" class="form-label">Users</label>
-                            <input type="text" class="form-control" id="txtUsers" readonly/>
+                            <input type="text" class="form-control" id="txtUsers" readonly />
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
+                <button type="button" class="btn btn-primary" id="btnAddAccount">Save</button>
             </div>
         </div>
     </div>
 
+
+
     <script>
-        const divAccounts = document.getElementById('divAccounts')
+        var divAccounts = document.getElementById('divAccounts')
 
-        const txtName = document.getElementById('txtName')
-        const txtFilter = document.getElementById('txtFilter')
-        const txtUsers = document.getElementById('txtUsers')
+        var txtName = document.getElementById('txtName')
+        var txtFilter = document.getElementById('txtFilter')
+        var txtUsers = document.getElementById('txtUsers')
 
-        const selectSearch = document.getElementById('selectSearch')
+        var selectSearch = document.getElementById('selectSearch')
 
-        const tableAccunts = document.getElementById('tableAccounts')
+        var tableAccunts = document.getElementById('tableAccounts')
 
-        const btnAddUser = document.getElementById('btnAddUser')
+        var btnAddUser = document.getElementById('btnAddUser')
+        var btnAddAccount = document.getElementById('btnAddAccount')
 
         var accounts = []
 
@@ -99,7 +102,6 @@
                 url: '@Url.Action("GetAccounts", "Dashboard")',
                 type: "POST",
                 success: function (result) {
-                    console.log(result)
                     if (result != "") {
                         accounts = result
                         CreateTable(accounts)
@@ -113,17 +115,25 @@
         }
 
         function CreateTable(accounts) {
+            console.log(accounts)
+            const element = document.getElementById('tbody')
+            if (element != null)
+                element.remove()
+
             var rows = ""
             accounts.forEach(function (item) {
                 var users = ""
                 item.Users.forEach(function (key) {
-                    users += key + " - "
+                    if (item.Users.slice(-1) == key)
+                        users += key
+                    else
+                        users += key + " - "
                 })
                 rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
-                    + '</td><td><input type="button" class="btn btn-outline-light" value=">"/></td></tr>'
+                    + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
             })
 
-            $('#tableAccounts').append('<tbody>' + rows + '</tbody>')
+            $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
         }
 
         txtFilter.addEventListener('input', function (e) {
@@ -134,9 +144,7 @@
                     data: { filter: val },
                     type: "POST",
                     success: function (result) {
-                        console.log(result)
-                        if(result != ""){
-                            $('#selectSearch').empty();
+                        if (result != "") {
                             CreateSelect(result)
                         }
                     },
@@ -148,25 +156,74 @@
             }
         })
 
-        function CreateSelect(users){
+        function CreateSelect(users) {
+            $('#selectSearch').empty();
             var option = ""
-            users.forEach(function(key){
+            users.forEach(function (key) {
                 option += '<option value"' + key + '">' + key + '</option>'
             })
 
             $('#selectSearch').append(option)
         }
 
-        btnAddUser.addEventListener('click', function(e){
+        btnAddUser.addEventListener('click', function (e) {
             var users = txtUsers.value
             var val = selectSearch.value
-            if(val != "" && !users.split(';').find(x => x == val)){
-                if(users == "")
+            if (val != "" && !users.split(';').find(x => x == val)) {
+                if (users == "")
                     users = val
                 else
                     users += ";" + val
 
                 txtUsers.value = users
+            }
+        })
+
+        btnAddAccount.addEventListener('click', function (e) {
+            var name = txtName.value
+            var users = txtUsers.value
+            if (name != "") {
+                $.ajax({
+                    url: '@Url.Action("InsertAccount", "Dashboard")',
+                    data: { name: name, stringUsers: users },
+                    type: "POST",
+                    success: function (result) {
+                        if (result != "") {
+                            accounts = result
+                            CreateTable(accounts)
+
+                            $('#modalAddAccount').modal('hide')
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
+            }
+            else
+                alert('Insert the name of new account')
+        })
+
+        document.addEventListener('click', function (e) {
+            if (e.target.className.split(' ')[2] == "btnAccounts") {
+                var idIncremental = e.target.id.substring(4)
+                $.ajax({
+                    url: '@Url.Action("Account", "Home")',
+                    data: { idIncremental: idIncremental },
+                    type: "POST",
+                    success: function (result) {
+                        if (result != "") {
+                            $('#divLoadComponent').empty()
+
+                            $('#divLoadComponent').append(result)
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
             }
         })
     </script>

@@ -47,11 +47,25 @@ namespace SplitExpenses.Controllers
 
         public ActionResult Dashboard()
         {
-            //return View(); //poi da togliere
             if (Authentication())
                 return View();
             else
                 return View("Login");
+        }
+
+        public ActionResult Account(int idIncremental)
+        {
+            if (Authentication())
+            {
+                var account = CheckAccount(idIncremental);
+                if (account != null)
+                {
+                    Session["Account"] = account;
+                    return View();
+                }
+            }
+            
+            return View("Login");
         }
 
         public bool Authentication()
@@ -68,6 +82,20 @@ namespace SplitExpenses.Controllers
                 Session["Logon"] = false;
                 return false;
             }
+        }
+
+        public Account CheckAccount(int idIncremental)
+        {
+            var mongo = new Mongo();
+            var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
+
+            foreach (var account in accounts)
+            {
+                if (account.Id.Increment == idIncremental)
+                    return account;
+            }
+
+            return null;
         }
     }
 }

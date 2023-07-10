@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +50,7 @@ namespace SplitExpenses.Models
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<User> users = splitExpenses.GetCollection<User>("Users");
 
-                var user = users.Aggregate().Match(x => x.Username.Contains(filter)).ToList();
+                var user = users.Aggregate().Match(x => x.Username.ToLower().Contains(filter.ToLower())).ToList();
 
                 return user;
             }
@@ -296,7 +297,7 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal async Task<List<Expense>> GetExpenses(int fatherId)
+        internal async Task<List<Expense>> GetExpenses(ObjectId fatherId)
         {
             try
             {

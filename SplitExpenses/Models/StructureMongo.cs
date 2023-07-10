@@ -50,13 +50,34 @@ namespace SplitExpenses.Models
         public double TotalExpenses { get; set; }
         public double UserExpenses { get; set; }
         public double Balance { get; set; }
+
+        public Account(string name, List<string> users)
+        {
+            Users = users;
+            Name = name;
+        }
+
+        public Account(List<string> users, string name, double totalExpenses, double userExpenses, double balance)
+        {
+            Users = users;
+            Name = name;
+            TotalExpenses = totalExpenses;
+            UserExpenses = userExpenses;
+            Balance = balance;
+        }
+    }
+
+    public class UsersAccount
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
 
     public class Expense
     {
         [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
-        public int FatherId { get; set; }
+        public ObjectId FatherId { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
         public DateTime Date { get; set; }

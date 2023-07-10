@@ -13,16 +13,8 @@
             </a>
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" aria-current="page">
-                        <svg class="bi me-2" width="16" height="16">
-                            <use xlink:href="#home"></use>
-                        </svg>
-                        Home
-                    </a>
-                </li>
                 <li>
-                    <a href="#" class="nav-link text-white">
+                    <a id="btnDashboard" class="nav-link text-white active">
                         <svg class="bi me-2" width="16" height="16">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
@@ -36,14 +28,25 @@
                         </svg>
                         Logout
                     </a>
-                </li>                
+                </li>
             </ul>
             <hr>
         </div>
     </div>
-    <div class="col-10" style="margin-top: 1%;">
+    <div class="col-10" style="margin-top: 1%;" id="divLoadComponent">
         @{
-            Html.RenderPartial("Accounts");   
+            Html.RenderPartial("Accounts");
         }
     </div>
 </div>
+
+<script>
+    const btnDashboard = document.getElementById('btnDashboard')
+
+    btnDashboard.addEventListener('click', function(){
+        $('#divLoadComponent').empty()
+
+        var url = '@Url.Action("Accounts", "Home")'
+        $('#divLoadComponent').load(url)
+    })
+</script>
