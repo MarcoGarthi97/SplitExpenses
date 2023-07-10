@@ -29,7 +29,7 @@
 <div class="modal fade" id="modalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content bg-dark">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="modalAddLabel">Add new account</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -45,15 +45,28 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-5">
+                        <div class="col-4">
                             <div class="mb-3">
                                 <label for="txtFilter" class="form-label">Name user</label>
                                 <input type="text" class="form-control" id="txtFilter" />
                             </div>
+                        </div>
+                        <div class="col-7">
                             <div class="mb-3">
+                                <label for="selectSearch" class="form-label">Search</label>
                                 <select class="form-select" aria-label="Default select example" id="selectSearch">
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-1">
+                            <input type="button" id="btnAddUser" class="btn btn-primary" value="+"
+                                style="margin-top: 77%;" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label for="txtUsers" class="form-label">Users</label>
+                            <input type="text" class="form-control" id="txtUsers" readonly/>
                         </div>
                     </div>
                 </form>
@@ -70,10 +83,13 @@
 
         const txtName = document.getElementById('txtName')
         const txtFilter = document.getElementById('txtFilter')
+        const txtUsers = document.getElementById('txtUsers')
 
         const selectSearch = document.getElementById('selectSearch')
 
         const tableAccunts = document.getElementById('tableAccounts')
+
+        const btnAddUser = document.getElementById('btnAddUser')
 
         var accounts = []
 
@@ -110,11 +126,48 @@
             $('#tableAccounts').append('<tbody>' + rows + '</tbody>')
         }
 
-        txtFilter.addEventListener('input' function(e)){
+        txtFilter.addEventListener('input', function (e) {
             var val = txtFilter.value
-            if(val != ""){
-                
+            if (val != "") {
+                $.ajax({
+                    url: '@Url.Action("GetUsers", "Dashboard")',
+                    data: { filter: val },
+                    type: "POST",
+                    success: function (result) {
+                        console.log(result)
+                        if(result != ""){
+                            $('#selectSearch').empty();
+                            CreateSelect(result)
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
             }
+        })
+
+        function CreateSelect(users){
+            var option = ""
+            users.forEach(function(key){
+                option += '<option value"' + key + '">' + key + '</option>'
+            })
+
+            $('#selectSearch').append(option)
         }
+
+        btnAddUser.addEventListener('click', function(e){
+            var users = txtUsers.value
+            var val = selectSearch.value
+            if(val != "" && !users.split(';').find(x => x == val)){
+                if(users == "")
+                    users = val
+                else
+                    users += ";" + val
+
+                txtUsers.value = users
+            }
+        })
     </script>
 

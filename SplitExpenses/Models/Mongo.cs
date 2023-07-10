@@ -49,7 +49,7 @@ namespace SplitExpenses.Models
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<User> users = splitExpenses.GetCollection<User>("Users");
 
-                var user = users.Find(x => x.Username.Contains(filter)).FirstOrDefault();
+                var user = users.Aggregate().Match(x => x.Username.Contains(filter)).ToList();
 
                 return user;
             }
