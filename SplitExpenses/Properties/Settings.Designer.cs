@@ -25,7 +25,7 @@ namespace SplitExpenses.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\marco\\source\\repos\\Expenses-Split\\Expenses-Split\\Credentials")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\marco\\source\\repos\\SplitExpenses\\MyCredentials")]
         public string PathCredentials {
             get {
                 return ((string)(this["PathCredentials"]));

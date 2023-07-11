@@ -50,7 +50,7 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public JsonResult InsertAccount(string name, string stringUsers)
+        public JsonResult InsertAccount(string name, string[] arrayUsers)
         {
             try
             {
@@ -58,8 +58,8 @@ namespace SplitExpenses.Controllers
                     return Json("");
 
                 var users = new List<string>();
-                if (stringUsers != "")
-                    users = stringUsers.Split(';').ToList();
+                if (arrayUsers.Length > 0)
+                    users = arrayUsers.ToList();
                 users.Add(((User)Session["InfoUser"]).Username);
 
                 var account = new Account(name, users);

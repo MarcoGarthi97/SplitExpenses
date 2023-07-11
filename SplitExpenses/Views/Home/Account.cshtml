@@ -1,10 +1,24 @@
-Working in progress
+<div class="row">
+    <div class="row">
+        <div class="col">
+            <h2 id="pNameAccount"></h2>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <input type="button" class="btn btn-primary" id="btnModalExpense" value="+" data-bs-toggle="modal"
+                data-bs-target="#modalAddExpense" />
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalAddExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalAddLabel">Add new account</h1>
+                <h1 class="modal-title fs-5" id="modalAddLabel">Expense</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -12,22 +26,37 @@ Working in progress
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label for="txtName" class="form-label">Name account</label>
+                                <label for="txtName" class="form-label">Title</label>
                                 <input type="text" class="form-control" id="txtName" />
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col">
                             <div class="mb-3">
-                                <label for="txtFilter" class="form-label">Name user</label>
-                                <input type="text" class="form-control" id="txtFilter" />
+                                <label for="numberCost" class="form-label">Cost</label>
+                                <input type="number" class="form-control" id="numberCost" />
                             </div>
                         </div>
-                        <div class="col-7">
+                        <div class="col">
                             <div class="mb-3">
-                                <label for="selectSearch" class="form-label">Search</label>
-                                <select class="form-select" aria-label="Default select example" id="selectSearch">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="txtFilter" class="form-label">Paid for by</label>
+                                <select class="form-select" aria-label="Default select example" id="selectPaid">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="mb-3">
+                                <label for="selectSearch" class="form-label">For who</label>
+                                <select class="form-select" aria-label="Default select example" id="selectFor">
                                 </select>
                             </div>
                         </div>
@@ -36,17 +65,14 @@ Working in progress
                                 style="margin-top: 77%;" />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="mb-3">
-                            <label for="txtUsers" class="form-label">Users</label>
-                            <input type="text" class="form-control" id="txtUsers" readonly />
-                        </div>
+                    <div class="row" id="divUsers">
+
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btnAddAccount">Save</button>
+                <button type="button" class="btn btn-primary" id="btnAddExpense">Save</button>
             </div>
         </div>
     </div>
@@ -54,10 +80,122 @@ Working in progress
 
 
     <script>
+        var divUsers = document.getElementById('divUsers')
+
+        var pNameAccount = document.getElementById('pNameAccount')
+
+        var txtName = document.getElementById('txtName')
+
+        var numberCost = document.getElementById('numberCost')
+
+        var date = document.getElementById('date')
+
+        var selectPaid = document.getElementById('selectPaid')
+        var selectFor = document.getElementById('selectFor')
+
+        var btnAddExpense = document.getElementById('btnAddExpense')
+        var btnAddUser = document.getElementById('btnAddUser')
+        var btnModalExpense = document.getElementById('btnModalExpense')
+
+        var users = []
+
+        date.valueAsDate = new Date()
+
         GetExpenses()
-        function GetExpenses(){
+        function GetExpenses() {
             $.ajax({
-                    url: '@Url.Action("GetExpenses", "Account")',
+                url: '@Url.Action("GetExpenses", "Account")',
+                type: "POST",
+                success: function (result) {
+                    if (result != "") {
+                        console.log(result)
+                    }
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error)
+                }
+            })
+        }
+
+        GetAccount()
+        function GetAccount() {
+            $.ajax({
+                url: '@Url.Action("GetAccount", "Account")',
+                type: "POST",
+                success: function (result) {
+                    if (result != "") {
+                        console.log(result)
+                        pNameAccount.innerHTML = result.Name
+
+                        result.Users.forEach(function (key) {
+                            users.push(key)
+                        })
+
+                        InsertOptionToSelectPaid()
+                    }
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error)
+                }
+            })
+        }
+
+        function InsertOptionToSelectPaid() {
+            var option = '<option value""></option>'
+            users.forEach(function (key) {
+                option += '<option value"' + key + '">' + key + '</option>'
+            })
+
+            $('#selectPaid').append(option)
+        }
+
+        selectPaid.addEventListener('change', function(){
+            var val = selectPaid.value
+            if(val != ''){
+                var usersFor = []
+                users.forEach(function(key){
+                    if(key != val)
+                        usersFor.push(key)
+                })
+                InsertOptionToSelectFor(usersFor)
+            }
+        })
+
+        function InsertOptionToSelectFor(usersFor) {
+            $('#selectFor').empty()
+            $('#divUsers').empty()
+            
+            var option = '<option value""></option>'
+            var html = ''
+            usersFor.forEach(function (key) {
+                option += '<option value"' + key + '">' + key + '</option>'
+                html += '<div class="col-6" id="divUser_' + key + '"><div class="row"><div class="col-10"><p>' + key + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + key + '" value="x"></div></div></div>'                
+            })
+
+            $('#selectFor').append(option)
+            $('#divUsers').append(html)
+        }
+
+        btnAddUser.addEventListener('click', function (e) {
+            var val = selectSearch.value
+            if (val != "" && !users.find(x => x == val)) {
+                users.push(val)
+                var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
+                $('#divUsers').append(html)
+            }
+        })
+
+        btnAddExpense.addEventListener('click', function (e) {
+            var name = txtName.value
+            var cost = numberCost.value
+            var d = date.value
+
+            if (name != '' && cost != '' && cost != '0' && d != '') {
+                $.ajax({
+                    url: '@Url.Action("InsertExpense", "Account")',
+                    data: { name: name, cost: cost, date: d },
                     type: "POST",
                     success: function (result) {
                         if (result != "") {
@@ -69,6 +207,17 @@ Working in progress
                         console.log(error)
                     }
                 })
-        }
+            }
+        })
+
+        document.addEventListener('click', function (e) {
+            if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
+                var username = e.target.id.substring(14)
+                $('#divUser_' + username).remove()
+
+                var index = users.indexOf(username)
+                users.splice(index, 1)
+            }
+        })
     </script>
 
