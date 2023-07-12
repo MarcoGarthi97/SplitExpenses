@@ -17,9 +17,14 @@ namespace SplitExpenses.Controllers
                     return Json("");
 
                 var mongo = new Mongo();
-                var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username);
+                var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
 
-                return Json(accounts.Result);
+                foreach (var account in accounts)
+                {
+                    accounts.Find(x => x.Id == account.Id).UserExpenses = account.BalanceUsers[((User)Session["InfoUser"]).Username];
+                }
+
+                return Json(accounts);
             }
             catch (Exception ex)
             {
@@ -77,6 +82,45 @@ namespace SplitExpenses.Controllers
             {
                 return Json("");
             }
+        }
+
+        public JsonResult DeleteAccount(int idIncremental)
+        {
+            try
+            {
+                if (Authentication())
+                {
+                    var account = CheckAccount(idIncremental);
+                    if (account != null)
+                    {
+                        var mongo = new Mongo();
+                        var delete = mongo.DeleteAccount(account.Id).Result;
+
+                        if (delete)
+                            return Json(true);
+                    }
+                }
+
+                return Json(false);
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+            }
+        }
+
+        public Account CheckAccount(int idIncremental)
+        {
+            var mongo = new Mongo();
+            var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
+
+            foreach (var account in accounts)
+            {
+                if (account.Id.Increment == idIncremental)
+                    return account;
+            }
+
+            return null;
         }
 
         public bool Authentication()

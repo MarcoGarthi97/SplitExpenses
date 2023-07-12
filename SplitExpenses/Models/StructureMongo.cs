@@ -47,22 +47,35 @@ namespace SplitExpenses.Models
         public ObjectId Id { get; set; }
         public List<string> Users { get; set; }
         public string Name { get; set; }
-        public double TotalExpenses { get; set; }
+        [BsonIgnoreIfDefault]
         public double UserExpenses { get; set; }
+        public double TotalExpenses { get; set; }
         public double Balance { get; set; }
+        public Dictionary<string, double> BalanceUsers { get; set; }
 
         public Account(string name, List<string> users)
         {
             Users = users;
             Name = name;
+
+            var balanceUsers = new Dictionary<string, double>();
+            foreach (var user in Users)
+                balanceUsers.Add(user, 0);
+
+            BalanceUsers = balanceUsers;
         }
 
-        public Account(List<string> users, string name, double totalExpenses, double userExpenses, double balance)
+        public Account(Dictionary<string, double> balanceUsers, double totalExpenses)
+        {
+            BalanceUsers = balanceUsers;
+            TotalExpenses = totalExpenses;
+        }
+
+        public Account(List<string> users, string name, double totalExpenses, double balance)
         {
             Users = users;
             Name = name;
             TotalExpenses = totalExpenses;
-            UserExpenses = userExpenses;
             Balance = balance;
         }
     }
@@ -85,5 +98,25 @@ namespace SplitExpenses.Models
         public List<string> PaidFor { get; set; }
         public double Cost { get; set; }
 
+        public Expense(ObjectId fatherId, string name, DateTime date, string paidBy, List<string> paidFor, double cost)
+        {
+            FatherId = fatherId;
+            Name = name;
+            Date = date;
+            PaidBy = paidBy;
+            PaidFor = paidFor;
+            Cost = cost;
+        }
+
+        public Expense(ObjectId fatherId, string name, string category, DateTime date, string paidBy, List<string> paidFor, double cost)
+        {
+            FatherId = fatherId;
+            Name = name;
+            Category = category;
+            Date = date;
+            PaidBy = paidBy;
+            PaidFor = paidFor;
+            Cost = cost;
+        }
     }
 }

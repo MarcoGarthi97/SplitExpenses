@@ -1,3 +1,4 @@
+
 <div class="row">
     <div class="row">
         <div class="col">
@@ -19,6 +20,7 @@
                     <th scope="col">User Expenses</th>
                     <th scope="col">Total Expenses</th>
                     <th scope="col">Users</th>
+                    <th scope="col"></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -70,7 +72,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btnAddAccount">Save</button>
             </div>
         </div>
@@ -115,7 +117,6 @@
         }
 
         function CreateTable(accounts) {
-            console.log(accounts)
             const element = document.getElementById('tbody')
             if (element != null)
                 element.remove()
@@ -130,6 +131,7 @@
                         users += key + " - "
                 })
                 rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
+                    + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
                     + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
                     + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
             })
@@ -188,7 +190,7 @@
                             accounts = result
                             CreateTable(accounts)
 
-                            $('#modalAddAccount').modal('hide')
+                            $('#btnCloseModal').click()
                         }
                     },
                     error: function (error) {
@@ -221,7 +223,26 @@
                     }
                 })
             }
-            else if(e.target.className.split(' ').find(x => x == "btnDeleteUsers")){
+            else if (e.target.className.split(' ')[2] == "btnDeleteAccounts") {
+                if (confirm("Are you sure delete the account?") == true) {
+                    var idIncremental = e.target.id.substring(10)
+                    $.ajax({
+                        url: '@Url.Action("DeleteAccount", "Dashboard")',
+                        data: { idIncremental: idIncremental },
+                        type: "POST",
+                        success: function (result) {
+                            if (result) {
+                                GetAccounts()
+                            }
+                        },
+                        error: function (error) {
+                            console.log("error")
+                            console.log(error)
+                        }
+                    })
+                }
+            }
+            else if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
                 var username = e.target.id.substring(14)
                 console.log(username)
                 $('#divUser_' + username).remove()

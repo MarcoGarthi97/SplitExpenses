@@ -11,10 +11,24 @@
                 data-bs-target="#modalAddExpense" />
         </div>
     </div>
+    <div class="row">
+        <table class="table table-dark" id="tableExpenses">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Paid by</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Import</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" id="modalAddExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">
+
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark">
             <div class="modal-header">
@@ -71,153 +85,194 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btnAddExpense">Save</button>
             </div>
         </div>
     </div>
+</div>
 
 
 
-    <script>
-        var divUsers = document.getElementById('divUsers')
+<script>
+    var divUsers = document.getElementById('divUsers')
 
-        var pNameAccount = document.getElementById('pNameAccount')
+    var pNameAccount = document.getElementById('pNameAccount')
 
-        var txtName = document.getElementById('txtName')
+    var txtName = document.getElementById('txtName')
 
-        var numberCost = document.getElementById('numberCost')
+    var numberCost = document.getElementById('numberCost')
 
-        var date = document.getElementById('date')
+    var date = document.getElementById('date')
 
-        var selectPaid = document.getElementById('selectPaid')
-        var selectFor = document.getElementById('selectFor')
+    var selectPaid = document.getElementById('selectPaid')
+    var selectFor = document.getElementById('selectFor')
 
-        var btnAddExpense = document.getElementById('btnAddExpense')
-        var btnAddUser = document.getElementById('btnAddUser')
-        var btnModalExpense = document.getElementById('btnModalExpense')
+    var btnAddExpense = document.getElementById('btnAddExpense')
+    var btnAddUser = document.getElementById('btnAddUser')
+    var btnModalExpense = document.getElementById('btnModalExpense')
 
-        var users = []
+    var users = []
+    var usersFor = []
 
-        date.valueAsDate = new Date()
+    date.valueAsDate = new Date()
 
-        GetExpenses()
-        function GetExpenses() {
-            $.ajax({
-                url: '@Url.Action("GetExpenses", "Account")',
-                type: "POST",
-                success: function (result) {
-                    if (result != "") {
-                        console.log(result)
-                    }
-                },
-                error: function (error) {
-                    console.log("error")
-                    console.log(error)
+    GetExpenses()
+    function GetExpenses() {
+        $.ajax({
+            url: '@Url.Action("GetExpenses", "Account")',
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    console.log(result)
+                    CreateTable(result)
                 }
-            })
-        }
-
-        GetAccount()
-        function GetAccount() {
-            $.ajax({
-                url: '@Url.Action("GetAccount", "Account")',
-                type: "POST",
-                success: function (result) {
-                    if (result != "") {
-                        console.log(result)
-                        pNameAccount.innerHTML = result.Name
-
-                        result.Users.forEach(function (key) {
-                            users.push(key)
-                        })
-
-                        InsertOptionToSelectPaid()
-                    }
-                },
-                error: function (error) {
-                    console.log("error")
-                    console.log(error)
-                }
-            })
-        }
-
-        function InsertOptionToSelectPaid() {
-            var option = '<option value""></option>'
-            users.forEach(function (key) {
-                option += '<option value"' + key + '">' + key + '</option>'
-            })
-
-            $('#selectPaid').append(option)
-        }
-
-        selectPaid.addEventListener('change', function(){
-            var val = selectPaid.value
-            if(val != ''){
-                var usersFor = []
-                users.forEach(function(key){
-                    if(key != val)
-                        usersFor.push(key)
-                })
-                InsertOptionToSelectFor(usersFor)
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
             }
         })
+    }
 
-        function InsertOptionToSelectFor(usersFor) {
-            $('#selectFor').empty()
-            $('#divUsers').empty()
-            
-            var option = '<option value""></option>'
-            var html = ''
-            usersFor.forEach(function (key) {
-                option += '<option value"' + key + '">' + key + '</option>'
-                html += '<div class="col-6" id="divUser_' + key + '"><div class="row"><div class="col-10"><p>' + key + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + key + '" value="x"></div></div></div>'                
+    function CreateTable(expenses){
+        const element = document.getElementById('tbody')
+            if (element != null)
+                element.remove()
+
+            var rows = ""
+            expenses.forEach(function (item) {
+                var date = new Date(1689112800000).toLocaleDateString('en-GB')
+                rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
+                    + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
+                    + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
             })
 
-            $('#selectFor').append(option)
+            $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
+    }
+
+    GetAccount()
+    function GetAccount() {
+        $.ajax({
+            url: '@Url.Action("GetAccount", "Account")',
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    console.log(result)
+                    pNameAccount.innerHTML = result.Name
+
+                    result.Users.forEach(function (key) {
+                        users.push(key)
+                    })
+
+                    InsertOptionToSelectPaid()
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function InsertOptionToSelectPaid() {
+        var option = '<option value""></option>'
+        users.forEach(function (key) {
+            option += '<option value"' + key + '">' + key + '</option>'
+        })
+
+        $('#selectPaid').append(option)
+    }
+
+    selectPaid.addEventListener('change', function () {
+        var val = selectPaid.value
+        if (val != '') {
+            usersFor = []
+            users.forEach(function (key) {
+                if (key != val)
+                    usersFor.push(key)
+            })
+            InsertOptionToSelectFor(usersFor)
+        }
+    })
+
+    function InsertOptionToSelectFor(usersFor) {
+        $('#selectFor').empty()
+        $('#divUsers').empty()
+
+        var option = '<option value""></option>'
+        var html = ''
+        usersFor.forEach(function (key) {
+            option += '<option value"' + key + '">' + key + '</option>'
+            html += '<div class="col-6" id="divUser_' + key + '"><div class="row"><div class="col-10"><p>' + key + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + key + '" value="x"></div></div></div>'
+        })
+
+        $('#selectFor').append(option)
+        $('#divUsers').append(html)
+    }
+
+    btnAddUser.addEventListener('click', function (e) {
+        var val = selectFor.value
+        if (val != "" && !users.find(x => x == val)) {
+            users.push(val)
+            var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
             $('#divUsers').append(html)
         }
+    })
 
-        btnAddUser.addEventListener('click', function (e) {
-            var val = selectSearch.value
-            if (val != "" && !users.find(x => x == val)) {
-                users.push(val)
-                var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
-                $('#divUsers').append(html)
-            }
-        })
+    btnAddExpense.addEventListener('click', function (e) {
+        var name = txtName.value
+        var cost = numberCost.value
+        var d = date.value
+        var owner = selectPaid.value
 
-        btnAddExpense.addEventListener('click', function (e) {
-            var name = txtName.value
-            var cost = numberCost.value
-            var d = date.value
-
-            if (name != '' && cost != '' && cost != '0' && d != '') {
-                $.ajax({
-                    url: '@Url.Action("InsertExpense", "Account")',
-                    data: { name: name, cost: cost, date: d },
-                    type: "POST",
-                    success: function (result) {
-                        if (result != "") {
-                            console.log(result)
-                        }
-                    },
-                    error: function (error) {
-                        console.log("error")
-                        console.log(error)
+        if (name != '' && cost != '' && cost != '0' && d != '') {
+            $.ajax({
+                url: '@Url.Action("InsertExpense", "Account")',
+                data: { name: name, cost: cost, date: d, owner: owner, usersFor: usersFor },
+                type: "POST",
+                success: function (result) {
+                    if (result) {
+                        console.log(result)
+                        $('#btnCloseModal').click()
+                        GetExpenses()
                     }
-                })
-            }
-        })
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error.responseText)
+                }
+            })
+        }
+    })
 
-        document.addEventListener('click', function (e) {
-            if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
-                var username = e.target.id.substring(14)
-                $('#divUser_' + username).remove()
+    document.addEventListener('click', function (e) {
+        if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
+            var username = e.target.id.substring(14)
+            $('#divUser_' + username).remove()
 
-                var index = users.indexOf(username)
-                users.splice(index, 1)
-            }
-        })
-    </script>
+            var index = users.indexOf(username)
+            users.splice(index, 1)
+        }
+        else if(e.target.className.split(' ').find(x => x == 'btnDeleteExpenses')){
+            if (confirm("Are you sure delete the account?") == true) {
+                    var idIncremental = e.target.id.substring(10)
+                    $.ajax({
+                        url: '@Url.Action("DeleteExpense", "Account")',
+                        data: { id: idIncremental },
+                        type: "POST",
+                        success: function (result) {
+                            if (result) {
+                                GetExpenses()
+                            }
+                        },
+                        error: function (error) {
+                            console.log("error")
+                            console.log(error)
+                        }
+                    })
+                }
+        }
+    })
+</script>
 

@@ -61,6 +61,7 @@ namespace SplitExpenses.Controllers
                 if (account != null)
                 {
                     Session["Account"] = account;
+
                     return View();
                 }
             }
