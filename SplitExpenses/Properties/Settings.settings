@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="PathCredentials" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">C:\Users\marco\source\repos\SplitExpenses\MyCredentials</Value>
+      <Value Profile="(Default)">C:\Users\m.garthi\source\repos\SplitExpenses\MyCredentials</Value>
     </Setting>
   </Settings>
 </SettingsFile>

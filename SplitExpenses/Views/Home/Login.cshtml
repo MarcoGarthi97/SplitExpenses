@@ -1,31 +1,26 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-<link rel="stylesheet" href="~/Content/Login/Login.css">
 
-<div class="body-content container">
-    <div class="div-main">
-                <img class="mb-4" src="~/Images/Logo.png" alt="" width="72" height="57">
-                <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="username" placeholder="name@example.com">
-                    <label for="floatingInput">Username</label>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card bg-dark">
+            <div class="card-header"><h2>Login</h2></div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="username">
                 </div>
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="password" placeholder="Password">
-                    <label for="floatingPassword">Password</label>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password">
                 </div>
-
-                <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" value="remember-me"> Remember me
-                    </label>
-                </div>
-                <button class="w-100 btn btn-lg btn-primary" type="submit" id="login">Sign in</button>
+                <button type="button" id="login" class="btn btn-primary">Login</button>
+            </div>
+        </div>
     </div>
-
 </div>
+
 
 <script>
     const txtUsername = document.getElementById('username')

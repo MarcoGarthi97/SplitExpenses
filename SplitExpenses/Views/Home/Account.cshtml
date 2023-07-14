@@ -1,3 +1,8 @@
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
 <div class="row">
     <div class="row">
         <div class="col">
@@ -85,7 +90,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnCloseModal"
+                    data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btnAddExpense">Save</button>
             </div>
         </div>
@@ -135,20 +141,20 @@
         })
     }
 
-    function CreateTable(expenses){
+    function CreateTable(expenses) {
         const element = document.getElementById('tbody')
-            if (element != null)
-                element.remove()
+        if (element != null)
+            element.remove()
 
-            var rows = ""
-            expenses.forEach(function (item) {
-                var date = new Date(1689112800000).toLocaleDateString('en-GB')
-                rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
-                    + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
-                    + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
-            })
+        var rows = ""
+        expenses.forEach(function (item) {
+            var date = new Date(1689112800000).toLocaleDateString('en-GB')
+            rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
+                + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
+                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
+        })
 
-            $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
+        $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
     }
 
     GetAccount()
@@ -254,24 +260,24 @@
             var index = users.indexOf(username)
             users.splice(index, 1)
         }
-        else if(e.target.className.split(' ').find(x => x == 'btnDeleteExpenses')){
+        else if (e.target.className.split(' ').find(x => x == 'btnDeleteExpenses')) {
             if (confirm("Are you sure delete the account?") == true) {
-                    var idIncremental = e.target.id.substring(10)
-                    $.ajax({
-                        url: '@Url.Action("DeleteExpense", "Account")',
-                        data: { id: idIncremental },
-                        type: "POST",
-                        success: function (result) {
-                            if (result) {
-                                GetExpenses()
-                            }
-                        },
-                        error: function (error) {
-                            console.log("error")
-                            console.log(error)
+                var idIncremental = e.target.id.substring(10)
+                $.ajax({
+                    url: '@Url.Action("DeleteExpense", "Account")',
+                    data: { id: idIncremental },
+                    type: "POST",
+                    success: function (result) {
+                        if (result) {
+                            GetExpenses()
                         }
-                    })
-                }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
+            }
         }
     })
 </script>

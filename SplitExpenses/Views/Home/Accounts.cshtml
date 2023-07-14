@@ -1,3 +1,7 @@
+@{
+    ViewBag.Title = "Home Page";
+}
+
 
 <div class="row">
     <div class="row">
@@ -72,41 +76,85 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="btnCloseModal"
+                    data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btnAddAccount">Save</button>
             </div>
         </div>
     </div>
+</div>
 
 
 
-    <script>
-        var divAccounts = document.getElementById('divAccounts')
-        var divUsers = document.getElementById('divUsers')
+<script>
+    var divAccounts = document.getElementById('divAccounts')
+    var divUsers = document.getElementById('divUsers')
 
-        var txtName = document.getElementById('txtName')
-        var txtFilter = document.getElementById('txtFilter')
-        var txtUsers = document.getElementById('txtUsers')
+    var txtName = document.getElementById('txtName')
+    var txtFilter = document.getElementById('txtFilter')
+    var txtUsers = document.getElementById('txtUsers')
 
-        var selectSearch = document.getElementById('selectSearch')
+    var selectSearch = document.getElementById('selectSearch')
 
-        var tableAccunts = document.getElementById('tableAccounts')
+    var tableAccunts = document.getElementById('tableAccounts')
 
-        var btnAddUser = document.getElementById('btnAddUser')
-        var btnAddAccount = document.getElementById('btnAddAccount')
+    var btnAddUser = document.getElementById('btnAddUser')
+    var btnAddAccount = document.getElementById('btnAddAccount')
 
-        var accounts = []
-        var users = []
+    var accounts = []
+    var users = []
 
-        GetAccounts()
-        function GetAccounts() {
+    GetAccounts()
+    function GetAccounts() {
+        $.ajax({
+            url: '@Url.Action("GetAccounts", "Dashboard")',
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    accounts = result
+                    CreateTable(accounts)
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function CreateTable(accounts) {
+        const element = document.getElementById('tbody')
+        if (element != null)
+            element.remove()
+
+        var rows = ""
+        accounts.forEach(function (item) {
+            var users = ""
+            item.Users.forEach(function (key) {
+                if (item.Users.slice(-1) == key)
+                    users += key
+                else
+                    users += key + " - "
+            })
+            rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
+                + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
+        })
+
+        $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
+    }
+
+    txtFilter.addEventListener('input', function (e) {
+        var val = txtFilter.value
+        if (val != "") {
             $.ajax({
-                url: '@Url.Action("GetAccounts", "Dashboard")',
+                url: '@Url.Action("GetUsers", "Dashboard")',
+                data: { filter: val },
                 type: "POST",
                 success: function (result) {
                     if (result != "") {
-                        accounts = result
-                        CreateTable(accounts)
+                        CreateSelect(result)
                     }
                 },
                 error: function (error) {
@@ -115,106 +163,82 @@
                 }
             })
         }
+    })
 
-        function CreateTable(accounts) {
-            const element = document.getElementById('tbody')
-            if (element != null)
-                element.remove()
+    function CreateSelect(users) {
+        $('#selectSearch').empty();
+        var option = ""
+        users.forEach(function (key) {
+            option += '<option value"' + key + '">' + key + '</option>'
+        })
 
-            var rows = ""
-            accounts.forEach(function (item) {
-                var users = ""
-                item.Users.forEach(function (key) {
-                    if (item.Users.slice(-1) == key)
-                        users += key
-                    else
-                        users += key + " - "
-                })
-                rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
-                    + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
-                    + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
-                    + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
-            })
+        $('#selectSearch').append(option)
+    }
 
-            $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
+    btnAddUser.addEventListener('click', function (e) {
+        var val = selectSearch.value
+        if (val != "" && !users.find(x => x == val)) {
+            users.push(val)
+            var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
+            $('#divUsers').append(html)
         }
+    })
 
-        txtFilter.addEventListener('input', function (e) {
-            var val = txtFilter.value
-            if (val != "") {
-                $.ajax({
-                    url: '@Url.Action("GetUsers", "Dashboard")',
-                    data: { filter: val },
-                    type: "POST",
-                    success: function (result) {
-                        if (result != "") {
-                            CreateSelect(result)
-                        }
-                    },
-                    error: function (error) {
-                        console.log("error")
-                        console.log(error)
+    btnAddAccount.addEventListener('click', function (e) {
+        var name = txtName.value
+        if (name != "") {
+            $.ajax({
+                url: '@Url.Action("InsertAccount", "Dashboard")',
+                data: { name: name, arrayUsers: users },
+                type: "POST",
+                success: function (result) {
+                    if (result != "") {
+                        accounts = result
+                        CreateTable(accounts)
+
+                        $('#btnCloseModal').click()
                     }
-                })
-            }
-        })
-
-        function CreateSelect(users) {
-            $('#selectSearch').empty();
-            var option = ""
-            users.forEach(function (key) {
-                option += '<option value"' + key + '">' + key + '</option>'
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error)
+                }
             })
-
-            $('#selectSearch').append(option)
         }
+        else
+            alert('Insert the name of new account')
+    })
 
-        btnAddUser.addEventListener('click', function (e) {
-            var val = selectSearch.value
-            if (val != "" && !users.find(x => x == val)) {
-                users.push(val)
-                var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
-                $('#divUsers').append(html)
-            }
-        })
+    document.addEventListener('click', function (e) {
+        if (e.target.className.split(' ')[2] == "btnAccounts") {
+            var idIncremental = e.target.id.substring(4)
+            $.ajax({
+                url: '@Url.Action("Account", "Home")',
+                data: { idIncremental: idIncremental },
+                type: "POST",
+                success: function (result) {
+                    if (result != "") {
+                        $('#divLoadComponent').empty()
 
-        btnAddAccount.addEventListener('click', function (e) {
-            var name = txtName.value
-            if (name != "") {
-                $.ajax({
-                    url: '@Url.Action("InsertAccount", "Dashboard")',
-                    data: { name: name, arrayUsers: users },
-                    type: "POST",
-                    success: function (result) {
-                        if (result != "") {
-                            accounts = result
-                            CreateTable(accounts)
-
-                            $('#btnCloseModal').click()
-                        }
-                    },
-                    error: function (error) {
-                        console.log("error")
-                        console.log(error)
+                        $('#divLoadComponent').append(result)
                     }
-                })
-            }
-            else
-                alert('Insert the name of new account')
-        })
-
-        document.addEventListener('click', function (e) {
-            if (e.target.className.split(' ')[2] == "btnAccounts") {
-                var idIncremental = e.target.id.substring(4)
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error)
+                }
+            })
+        }
+        else if (e.target.className.split(' ')[2] == "btnDeleteAccounts") {
+            if (confirm("Are you sure delete the account?") == true) {
+                var idIncremental = e.target.id.substring(10)
                 $.ajax({
-                    url: '@Url.Action("Account", "Home")',
+                    url: '@Url.Action("DeleteAccount", "Dashboard")',
                     data: { idIncremental: idIncremental },
                     type: "POST",
                     success: function (result) {
-                        if (result != "") {
-                            $('#divLoadComponent').empty()
-
-                            $('#divLoadComponent').append(result)
+                        if (result) {
+                            GetAccounts()
                         }
                     },
                     error: function (error) {
@@ -223,35 +247,17 @@
                     }
                 })
             }
-            else if (e.target.className.split(' ')[2] == "btnDeleteAccounts") {
-                if (confirm("Are you sure delete the account?") == true) {
-                    var idIncremental = e.target.id.substring(10)
-                    $.ajax({
-                        url: '@Url.Action("DeleteAccount", "Dashboard")',
-                        data: { idIncremental: idIncremental },
-                        type: "POST",
-                        success: function (result) {
-                            if (result) {
-                                GetAccounts()
-                            }
-                        },
-                        error: function (error) {
-                            console.log("error")
-                            console.log(error)
-                        }
-                    })
-                }
-            }
-            else if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
-                var username = e.target.id.substring(14)
-                console.log(username)
-                $('#divUser_' + username).remove()
+        }
+        else if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
+            var username = e.target.id.substring(14)
+            console.log(username)
+            $('#divUser_' + username).remove()
 
-                var index = users.indexOf(username)
-                users.splice(index, 1)
+            var index = users.indexOf(username)
+            users.splice(index, 1)
 
-                console.log(users)
-            }
-        })
-    </script>
+            console.log(users)
+        }
+    })
+</script>
 
