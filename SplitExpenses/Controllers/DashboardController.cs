@@ -21,7 +21,7 @@ namespace SplitExpenses.Controllers
 
                 foreach (var account in accounts)
                 {
-                    accounts.Find(x => x.Id == account.Id).UserExpenses = account.BalanceUsers[((User)Session["InfoUser"]).Username];
+                    accounts.Find(x => x.Id == account.Id).UserExpenses = account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Balance;
                 }
 
                 return Json(accounts);
@@ -55,19 +55,36 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public JsonResult InsertAccount(string name, string[] arrayUsers)
+        public JsonResult InsertAccount(string name, List<string> users)
         {
             try
             {
                 if (!Authentication())
                     return Json("");
 
-                var users = new List<string>();
-                if (arrayUsers.Length > 0)
-                    users = arrayUsers.ToList();
+                List<UsersAccount> usersAccount = new List<UsersAccount>();
                 users.Add(((User)Session["InfoUser"]).Username);
+                foreach(var user in users)
+                {
+                    UsersAccount userAccount = new UsersAccount();
+                    userAccount.Name = user;
+                    userAccount.Balance = 0;
 
-                var account = new Account(name, users);
+                    if(user == ((User)Session["InfoUser"]).Username)
+                    {
+                        userAccount.Owner = true;
+                        userAccount.Invitation = 1;
+                    }
+                    else
+                    {
+                        userAccount.Owner = true;
+                        userAccount.Invitation = 0;
+                    }
+
+                    usersAccount.Add(userAccount);
+                }
+
+                var account = new Account(name, usersAccount);
 
                 var mongo = new Mongo();
                 var insert = mongo.InsertAccount(account).Result;

@@ -110,6 +110,7 @@
             url: '@Url.Action("GetAccounts", "Dashboard")',
             type: "POST",
             success: function (result) {
+                console.log(result)
                 if (result != "") {
                     accounts = result
                     CreateTable(accounts)
@@ -131,10 +132,10 @@
         accounts.forEach(function (item) {
             var users = ""
             item.Users.forEach(function (key) {
-                if (item.Users.slice(-1) == key)
-                    users += key
+                if (JSON.stringify(item.Users.slice(-1)) === JSON.stringify(Object.is(key)))
+                    users += key.Name
                 else
-                    users += key + " - "
+                    users += key.Name + " - "
             })
             rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
                 + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
@@ -189,7 +190,7 @@
         if (name != "") {
             $.ajax({
                 url: '@Url.Action("InsertAccount", "Dashboard")',
-                data: { name: name, arrayUsers: users },
+                data: { name: name, users: users },
                 type: "POST",
                 success: function (result) {
                     if (result != "") {

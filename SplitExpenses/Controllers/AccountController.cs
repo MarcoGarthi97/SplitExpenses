@@ -102,7 +102,7 @@ namespace SplitExpenses.Controllers
 
         private void RecalculateAll()
         {
-            Dictionary<string, double> recalculatedAmounts = RecalculateAmounts();
+            var recalculatedAmounts = RecalculateAmounts();
 
             double total = GetTotalAccount();
             var account = new Account(recalculatedAmounts, total);
@@ -125,30 +125,33 @@ namespace SplitExpenses.Controllers
             return total;
         }
 
-        private Dictionary<string, double> RecalculateAmounts()
+        private List<UsersAccount> RecalculateAmounts()
         {
-            Dictionary<string, double> result = new Dictionary<string, double>();
-
             var mongo = new Mongo();
+
+            var account = mongo.GetAccount(((Account)Session["Account"]).Id).Result;
+            var result = account.Users;
+
+            foreach (var user in result)
+                result[result.IndexOf(user)].Balance = 0;
+
             var expenses = mongo.GetExpenses(((Account)Session["Account"]).Id).Result;
 
             foreach (var expense in expenses)
             {
-                if (!result.ContainsKey(expense.PaidBy))
-                    result.Add(expense.PaidBy, 0);
-
                 double amount = expense.Cost - (expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1));
                 amount = Math.Round(amount, 2);
-                result[expense.PaidBy] += amount;
 
-                foreach(var users in expense.PaidFor)
+                var user = result.Find(x => x.Name == expense.PaidBy);
+                result[result.IndexOf(user)].Balance += amount;
+
+                foreach (var userPaidFor in expense.PaidFor)
                 {
-                    if (!result.ContainsKey(users))
-                        result.Add(users, 0);
-
                     amount = expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1);
                     amount = Math.Round(amount, 2);
-                    result[users] -= amount;
+
+                    user = result.Find(x => x.Name == userPaidFor);
+                    result[result.IndexOf(user)].Balance -= amount;
                 }
             }
 

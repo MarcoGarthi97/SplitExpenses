@@ -148,7 +148,8 @@
 
         var rows = ""
         expenses.forEach(function (item) {
-            var date = new Date(1689112800000).toLocaleDateString('en-GB')
+            var d = item.Date.substring(9, 13)
+            var date = new Date(d).toLocaleDateString('en-GB')
             rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
                 + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
                 + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
@@ -184,7 +185,7 @@
     function InsertOptionToSelectPaid() {
         var option = '<option value""></option>'
         users.forEach(function (key) {
-            option += '<option value"' + key + '">' + key + '</option>'
+            option += '<option value"' + key.Name + '">' + key.Name + '</option>'
         })
 
         $('#selectPaid').append(option)
@@ -195,7 +196,7 @@
         if (val != '') {
             usersFor = []
             users.forEach(function (key) {
-                if (key != val)
+                if (key.Name !== val)
                     usersFor.push(key)
             })
             InsertOptionToSelectFor(usersFor)
@@ -205,12 +206,12 @@
     function InsertOptionToSelectFor(usersFor) {
         $('#selectFor').empty()
         $('#divUsers').empty()
-
+        
         var option = '<option value""></option>'
         var html = ''
         usersFor.forEach(function (key) {
-            option += '<option value"' + key + '">' + key + '</option>'
-            html += '<div class="col-6" id="divUser_' + key + '"><div class="row"><div class="col-10"><p>' + key + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + key + '" value="x"></div></div></div>'
+            option += '<option value"' + key.Name + '">' + key.Name + '</option>'
+            html += '<div class="col-6" id="divUser_' + key.Name + '"><div class="row"><div class="col-10"><p>' + key.Name + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + key + '" value="x"></div></div></div>'
         })
 
         $('#selectFor').append(option)
@@ -221,7 +222,7 @@
         var val = selectFor.value
         if (val != "" && !users.find(x => x == val)) {
             users.push(val)
-            var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
+            var html = '<div class="col-6" id="divUser_' + val.Name + '"><div class="row"><div class="col-10"><p>' + val.Name + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-primary btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
             $('#divUsers').append(html)
         }
     })
@@ -231,6 +232,11 @@
         var cost = numberCost.value
         var d = date.value
         var owner = selectPaid.value
+
+        var listUsers = []
+        usersFor.forEach(function(key){
+            listUsers.push(key.Name)
+        })
 
         if (name != '' && cost != '' && cost != '0' && d != '') {
             $.ajax({

@@ -45,45 +45,38 @@ namespace SplitExpenses.Models
     {
         [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
-        public List<string> Users { get; set; }
+        public List<UsersAccount> Users { get; set; }
         public string Name { get; set; }
         [BsonIgnoreIfDefault]
         public double UserExpenses { get; set; }
         public double TotalExpenses { get; set; }
-        public double Balance { get; set; }
-        public Dictionary<string, double> BalanceUsers { get; set; }
 
-        public Account(string name, List<string> users)
+        public Account(List<UsersAccount> users, double totalExpenses)
         {
             Users = users;
-            Name = name;
-
-            var balanceUsers = new Dictionary<string, double>();
-            foreach (var user in Users)
-                balanceUsers.Add(user, 0);
-
-            BalanceUsers = balanceUsers;
-        }
-
-        public Account(Dictionary<string, double> balanceUsers, double totalExpenses)
-        {
-            BalanceUsers = balanceUsers;
             TotalExpenses = totalExpenses;
         }
 
-        public Account(List<string> users, string name, double totalExpenses, double balance)
+        public Account(string name, List<UsersAccount> users)
+        {
+            Users = users;
+            Name = name;
+        }
+
+        public Account(List<UsersAccount> users, string name, double totalExpenses, double balance)
         {
             Users = users;
             Name = name;
             TotalExpenses = totalExpenses;
-            Balance = balance;
         }
     }
 
     public class UsersAccount
     {
         public string Name { get; set; }
-        public string Type { get; set; }
+        public bool Owner { get; set; }
+        public double Balance { get; set; }
+        public int Invitation { get; set; }
     }
 
     public class Expense
