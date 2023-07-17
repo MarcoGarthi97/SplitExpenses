@@ -1,7 +1,9 @@
-﻿using SplitExpenses.Models;
+﻿using Microsoft.AspNet.SignalR;
+using SplitExpenses.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -30,6 +32,14 @@ namespace SplitExpenses.Controllers
             {
                 return Json("");
             }
+        }
+
+        public JsonResult GetUser()
+        {
+            if (!Authentication())
+                return Json("");
+
+            return Json(((User)Session["InfoUser"]).Username);
         }
 
         public JsonResult GetUsers(string filter)
@@ -77,7 +87,7 @@ namespace SplitExpenses.Controllers
                     }
                     else
                     {
-                        userAccount.Owner = true;
+                        userAccount.Owner = false;
                         userAccount.Invitation = 0;
                     }
 
@@ -92,6 +102,9 @@ namespace SplitExpenses.Controllers
                 if (!insert)
                     return Json("");
 
+                var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                hubContext.Clients.All.Notify();
+
                 var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
                 return Json(accounts);
             }
@@ -101,7 +114,7 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public JsonResult DeleteAccount(int idIncremental)
+        public async Task<JsonResult> DeleteAccount(int idIncremental)
         {
             try
             {
@@ -112,6 +125,9 @@ namespace SplitExpenses.Controllers
                     {
                         var mongo = new Mongo();
                         var delete = mongo.DeleteAccount(account.Id).Result;
+
+                        var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                        await hubContext.Clients.All.GetCountInvitations();
 
                         if (delete)
                             return Json(true);

@@ -387,5 +387,24 @@ namespace SplitExpenses.Models
                 return false;
             }
         }
+
+        internal async Task<List<Account>> GetCountInvitations(string username)
+        {
+            try
+            {
+                IMongoDatabase splitExpenses = GetDatabase();
+                IMongoCollection<Account> accounts = splitExpenses.GetCollection<Account>("Account");
+
+                var filter = Builders<Account>.Filter.ElemMatch(x => x.Users, u => u.Name == username && u.Invitation == 0);
+
+                var invitation = accounts.Aggregate().Match(filter).ToList();
+
+                return invitation;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

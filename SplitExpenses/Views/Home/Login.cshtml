@@ -37,7 +37,7 @@
             type: "POST",
             data: { username: username, password: password },
             success: function (result) {
-                console.log(result)
+                console.log($.connection.hub.id)
                 if (result)
                     window.location.href = '@Url.Action("Dashboard", "Home")'
             },

@@ -9,6 +9,7 @@ namespace SplitExpenses.Controllers
 {
     public class LoginController : Controller
     {
+        static public string _username;
         public JsonResult Logon(string username, string password)
         {
             Mongo mongo = new Mongo();
@@ -18,6 +19,9 @@ namespace SplitExpenses.Controllers
             {
                 Session["InfoUser"] = findUser;
                 Session["Logon"] = true;
+
+                _username = findUser.Username;
+
                 return Json(true);
             }
             else

@@ -42,11 +42,42 @@
 <script>
     const btnDashboard = document.getElementById('btnDashboard')
 
+    var _user = ''
+
     btnDashboard.addEventListener('click', function () {
         $('#divLoadComponent').empty()
 
         var url = '@Url.Action("Accounts", "Home")'
         $('#divLoadComponent').load(url)
     })
-</script>
 
+    GetInfoUser()
+    function GetInfoUser() {
+        $.ajax({
+            url: '@Url.Action("GetUser", "Dashboard")',
+            type: "POST",
+            success: function (result) {
+                _user = result
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    $(function () {
+            // Reference the auto-generated proxy for the hub.  
+            var chat = $.connection.chatHub;
+            // Create a function that the hub can call back to display messages.
+            chat.client.GetCountInvitations = function (result) {
+                // Add the message to the page. 
+                console.log(result)
+            };
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                chat.server.notify()
+            });
+        });
+
+</script>
