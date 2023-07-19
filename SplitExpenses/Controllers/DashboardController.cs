@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using SplitExpenses.Models;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public JsonResult InsertAccount(string name, List<string> users)
+        public async Task<JsonResult> InsertAccount(string name, List<string> users)
         {
             try
             {
@@ -102,8 +103,7 @@ namespace SplitExpenses.Controllers
                 if (!insert)
                     return Json("");
 
-                var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-                hubContext.Clients.All.Notify();
+                await Notification();
 
                 var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
                 return Json(accounts);
@@ -113,6 +113,7 @@ namespace SplitExpenses.Controllers
                 return Json("");
             }
         }
+
 
         public async Task<JsonResult> DeleteAccount(int idIncremental)
         {
@@ -126,8 +127,7 @@ namespace SplitExpenses.Controllers
                         var mongo = new Mongo();
                         var delete = mongo.DeleteAccount(account.Id).Result;
 
-                        var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-                        await hubContext.Clients.All.GetCountInvitations();
+                        await Notification();
 
                         if (delete)
                             return Json(true);
@@ -140,6 +140,14 @@ namespace SplitExpenses.Controllers
             {
                 return Json(false);
             }
+        }
+
+        public async Task<bool> Notification()
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            hubContext.Clients.All.handleNotify();
+
+            return true;
         }
 
         public Account CheckAccount(int idIncremental)

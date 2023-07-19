@@ -39,6 +39,30 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalAddAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalAddLabel">Invites</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row" id="divInvite">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnCloseModal"
+                    data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     const btnDashboard = document.getElementById('btnDashboard')
 
@@ -67,17 +91,17 @@
     }
 
     $(function () {
-            // Reference the auto-generated proxy for the hub.  
-            var chat = $.connection.chatHub;
-            // Create a function that the hub can call back to display messages.
-            chat.client.GetCountInvitations = function (result) {
-                // Add the message to the page. 
-                console.log(result)
-            };
-            // Start the connection.
-            $.connection.hub.start().done(function () {
-                chat.server.notify()
-            });
+
+        var chat = $.connection.chatHub;
+
+        chat.client.GetCountInvitations = function (result) {
+
+            console.log(result)
+        };
+
+        $.connection.hub.start().done(function () {
+            chat.server.notify()
         });
+    });
 
 </script>
