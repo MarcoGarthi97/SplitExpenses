@@ -144,8 +144,8 @@ namespace SplitExpenses.Controllers
 
         public async Task<bool> Notification()
         {
-            var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-            hubContext.Clients.All.handleNotify();
+            var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            context.Clients.All.GetCountInvitations();
 
             return true;
         }

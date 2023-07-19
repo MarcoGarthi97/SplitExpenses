@@ -17,13 +17,5 @@ namespace SplitExpenses.Models
 
             Clients.All.GetCountInvitations(invitations.Count);
         }
-
-        public async Task HandleNotify()
-        {
-            var mongo = new Mongo();
-            var invitations = await mongo.GetCountInvitations(LoginController._username);
-
-            Clients.All.HandleNotify(invitations.Count);
-        }
     }
 }
