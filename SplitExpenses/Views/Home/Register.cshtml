@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h2>Register</h2>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" name="name" class="form-control" id="name">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="mail" class="form-label">E-mail</label>
+                                <input type="text" name="mail" class="form-control" id="mail">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender">
+                                    <option value="" selected></option>
+                                    <option value="Man">Man</option>
+                                    <option value="Woman">Woman</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="birthday" class="form-label">Birthday</label>
+                                <input type="date" name="birthday" class="form-control" id="birthday">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" name="username" class="form-control" id="username">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" id="password">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="register" class="btn btn-primary">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const txtUsername = document.getElementById('username')
+    const txtPassword = document.getElementById('password')
+    const txtName = document.getElementById('name')
+    const txtMail = document.getElementById('mail')
+
+    const selectGender = document.getElementById('gender')
+    const dateBirthday = document.getElementById('birthday')
+
+    const btnRegister = document.getElementById('register')
+
+    btnRegister.addEventListener('click', function (e) {
+        var username = txtUsername.value
+        var password = txtPassword.value
+        var name = txtName.value
+        var mail = txtMail.value
+        var gender = selectGender.value
+        var birthday = dateBirthday.value
+
+        if (username != "" && password != "" && name != "" && mail != "" && gender != "" && birthday != "") {
+            if (username.length > 5) {
+                if (password.length > 5) {
+                    $.ajax({
+                        url: '@Url.Action("CheckUsername", "Login")',
+                        data: { username: username },
+                        type: "POST",
+                        success: function (result) {
+                            if (!result) {
+                                var obj = {}
+                                obj.Username = username
+                                obj.Password = password
+                                obj.Name = name
+                                obj.Mail = mail
+                                obj.Gender = gender
+                                obj.Birthday = birthday
+
+                                var json = JSON.stringify(obj)
+console.log(json)
+                                $.ajax({
+                                    url: '@Url.Action("Register", "Login")',
+                                    data: { json: json },
+                                    type: "POST",
+                                    success: function (result) {
+                                        if (result) {
+                                            window.location.href = '@Url.Action("Dashboard", "Home")'
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.log("error")
+                                        console.log(error)
+                                    }
+                                })
+                            }
+                        },
+                        error: function (error) {
+                            console.log("error")
+                            console.log(error)
+                        }
+                    })
+                }
+                else
+                    alert("Password too short")
+            }
+            else
+                alert("Username too short")
+        }
+        else
+            alert("Fill in all fields")
+    })
+</script>

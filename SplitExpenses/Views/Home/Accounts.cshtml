@@ -84,10 +84,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalDeleteAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to delete the account?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnDeleteAccount">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <script>
-    var divAccounts = document.getElementById('divAccounts')
+    const divAccounts = document.getElementById('divAccounts')
     var divUsers = document.getElementById('divUsers')
 
     var txtName = document.getElementById('txtName')
@@ -100,9 +117,12 @@
 
     var btnAddUser = document.getElementById('btnAddUser')
     var btnAddAccount = document.getElementById('btnAddAccount')
+    var btnDeleteAccount = document.getElementById('btnDeleteAccount')
 
     var accounts = []
     var users = []
+
+    var idIncremental
 
     GetAccounts()
     function GetAccounts() {
@@ -197,6 +217,9 @@
                         CreateTable(accounts)
 
                         $('#btnCloseModal').click()
+
+                        txtName.value = ""
+                        users = []
                     }
                 },
                 error: function (error) {
@@ -209,9 +232,29 @@
             alert('Insert the name of new account')
     })
 
+    btnDeleteAccount.addEventListener('click', function () {
+        console.log(idIncremental)
+        $.ajax({
+            url: '@Url.Action("DeleteAccount", "Dashboard")',
+            data: { idIncremental: idIncremental },
+            type: "POST",
+            success: function (result) {
+                if (result) {
+                    $('#modalDeleteAccount').modal('hide')
+
+                    GetAccounts()
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    })
+
     document.addEventListener('click', function (e) {
         if (e.target.className.split(' ')[2] == "btnAccounts") {
-            var idIncremental = e.target.id.substring(4)
+            idIncremental = e.target.id.substring(4)
             $.ajax({
                 url: '@Url.Action("Account", "Home")',
                 data: { idIncremental: idIncremental },
@@ -230,23 +273,9 @@
             })
         }
         else if (e.target.className.split(' ')[2] == "btnDeleteAccounts") {
-            if (confirm("Are you sure delete the account?") == true) {
-                var idIncremental = e.target.id.substring(10)
-                $.ajax({
-                    url: '@Url.Action("DeleteAccount", "Dashboard")',
-                    data: { idIncremental: idIncremental },
-                    type: "POST",
-                    success: function (result) {
-                        if (result) {
-                            GetAccounts()
-                        }
-                    },
-                    error: function (error) {
-                        console.log("error")
-                        console.log(error)
-                    }
-                })
-            }
+            idIncremental = e.target.id.substring(10)
+            
+            $('#modalDeleteAccount').modal('show')
         }
         else if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
             var username = e.target.id.substring(14)

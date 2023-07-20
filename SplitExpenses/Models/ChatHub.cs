@@ -10,12 +10,12 @@ namespace SplitExpenses.Models
 {
     public class ChatHub : Hub
     {
-        public async Task Notify()
+        public async Task Notify(string username)
         {
             var mongo = new Mongo();
             var invitations = await mongo.GetCountInvitations(LoginController._username);
 
-            Clients.All.GetCountInvitations(invitations.Count);
+            Clients.User(username).GetCountInvitations(invitations.Count);
         }
     }
 }

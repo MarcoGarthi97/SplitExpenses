@@ -258,6 +258,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CustomUserIdProvider.cs" />
     <Compile Include="Models\Mongo.cs" />
     <Compile Include="Models\ChatHub.cs" />
     <Compile Include="Models\StructureMongo.cs" />
@@ -303,6 +304,7 @@
     <Content Include="Views\Home\Account.cshtml" />
     <Content Include="Views\Home\Accounts.cshtml" />
     <Content Include="Views\Home\Notifications.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

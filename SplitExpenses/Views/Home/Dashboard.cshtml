@@ -3,7 +3,7 @@
 }
 
 <div class="row bg-dark">
-    <div class="col-2">
+    <div class="col-2" style="margin-top: 1%;">
         <div class="row">
             <div class="row">
                 <h2>Menu</h2>
@@ -12,13 +12,13 @@
             <div class="row">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
-                        <a href="#" id="btnDashboard" class="nav-link text-white active">
+                        <a onclick="LoadComponents()" id="btnDashboard" class="nav-link text-white active">
                             Dashboard
                         </a>
                     </li>
                     <li>
                         <a href="#" id="btnNotification" class="nav-link text-white position-relative">
-                            Notification
+                            Notification <span id="spanCount" style="color: red;"></span>
                         </a>
                     </li>
                     <li>
@@ -33,13 +33,11 @@
     </div>
 
     <div class="col-10" style="margin-top: 1%;" id="divLoadComponent">
-        @{
-            Html.RenderPartial("Accounts");
-        }
+        
     </div>
 </div>
 
-<div class="modal fade" id="modalAddAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="modalInviteAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark">
@@ -55,8 +53,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btnCloseModal"
-                    data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -66,14 +63,21 @@
 <script>
     const btnDashboard = document.getElementById('btnDashboard')
 
+    const spanCount = document.getElementById('spanCount')
+
     var _user = ''
+    var chat = $.connection.chatHub;
 
     btnDashboard.addEventListener('click', function () {
+        LoadComponents()
+    })
+
+    function LoadComponents(){        
         $('#divLoadComponent').empty()
 
         var url = '@Url.Action("Accounts", "Home")'
         $('#divLoadComponent').load(url)
-    })
+    }
 
     GetInfoUser()
     function GetInfoUser() {
@@ -81,7 +85,13 @@
             url: '@Url.Action("GetUser", "Dashboard")',
             type: "POST",
             success: function (result) {
-                _user = result
+                _user = result 
+
+                $('#btnDashboard').click()
+
+                $.connection.hub.start().done(function () {
+                    chat.server.notify(_user)
+                });
             },
             error: function (error) {
                 console.log("error")
@@ -91,17 +101,11 @@
     }
 
     $(function () {
-
-        var chat = $.connection.chatHub;
-
         chat.client.GetCountInvitations = function (result) {
-
             console.log(result)
+            spanCount.innerHTML = result
         };
-
-        $.connection.hub.start().done(function () {
-            chat.server.notify()
-        });
     });
+
 
 </script>

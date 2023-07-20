@@ -103,7 +103,7 @@ namespace SplitExpenses.Controllers
                 if (!insert)
                     return Json("");
 
-                await Notification();
+                await Notification(account.Users);
 
                 var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
                 return Json(accounts);
@@ -127,7 +127,7 @@ namespace SplitExpenses.Controllers
                         var mongo = new Mongo();
                         var delete = mongo.DeleteAccount(account.Id).Result;
 
-                        await Notification();
+                        await Notification(account.Users);
 
                         if (delete)
                             return Json(true);
@@ -142,10 +142,20 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public async Task<bool> Notification()
+        public async Task<bool> Notification(List<UsersAccount> users)
         {
-            var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-            context.Clients.All.GetCountInvitations();
+            var mongo = new Mongo();
+
+            foreach(var user in users)
+            {
+                if(user.Invitation == 0)
+                {
+                    var invitations = await mongo.GetCountInvitations(user.Name);
+
+                    var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                    context.Clients.User(user.Name).GetCountInvitations(invitations.Count);
+                }
+            }
 
             return true;
         }

@@ -1,4 +1,5 @@
-﻿using SplitExpenses.Models;
+﻿using Newtonsoft.Json;
+using SplitExpenses.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,36 @@ namespace SplitExpenses.Controllers
             }
             else
                 return Json(false);
-        }        
+        }   
+        
+        public JsonResult Register(string json)
+        {
+            var user = JsonConvert.DeserializeObject<User>(json);
+
+            Mongo mongo = new Mongo();
+            var findUser = mongo.CheckUser(user.Username).Result;
+
+            if (!findUser)
+            {
+                var insert = mongo.InsertUser(user).Result;
+                if (insert)
+                {
+                    var result = Logon(user.Username, user.Password);
+
+                    return Json(result);
+                }
+
+            }
+            
+            return Json(false);
+        }
+
+        public JsonResult CheckUsername(string username)
+        {
+            var mongo = new Mongo();
+            var result = mongo.CheckUser(username);
+
+            return Json(result);
+        }
     }
 }
