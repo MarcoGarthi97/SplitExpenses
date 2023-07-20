@@ -12,7 +12,7 @@
             <div class="row">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
-                        <a onclick="LoadComponents()" id="btnDashboard" class="nav-link text-white active">
+                        <a id="btnDashboard" class="nav-link text-white active">
                             Dashboard
                         </a>
                     </li>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="col-10" style="margin-top: 1%;" id="divLoadComponent">
-        
+
     </div>
 </div>
 
@@ -59,53 +59,22 @@
     </div>
 </div>
 
-
 <script>
-    const btnDashboard = document.getElementById('btnDashboard')
+    var urlAccount = '@Url.Action("Account", "Home")'
+    var urlAccounts = '@Url.Action("Accounts", "Home")'
 
-    const spanCount = document.getElementById('spanCount')
+    var urlGetAccounts = '@Url.Action("GetAccounts", "Dashboard")'
+    var urlGetInfoUser = '@Url.Action("GetUser", "Dashboard")'
+    var urlGetUsers = '@Url.Action("GetUsers", "Dashboard")'
+    var urlDeleteAccount = '@Url.Action("DeleteAccount", "Dashboard")'
+    var urlInsertAccount = '@Url.Action("InsertAccount", "Dashboard")'
 
-    var _user = ''
-    var chat = $.connection.chatHub;
-
-    btnDashboard.addEventListener('click', function () {
-        LoadComponents()
-    })
-
-    function LoadComponents(){        
-        $('#divLoadComponent').empty()
-
-        var url = '@Url.Action("Accounts", "Home")'
-        $('#divLoadComponent').load(url)
-    }
-
-    GetInfoUser()
-    function GetInfoUser() {
-        $.ajax({
-            url: '@Url.Action("GetUser", "Dashboard")',
-            type: "POST",
-            success: function (result) {
-                _user = result 
-
-                $('#btnDashboard').click()
-
-                $.connection.hub.start().done(function () {
-                    chat.server.notify(_user)
-                });
-            },
-            error: function (error) {
-                console.log("error")
-                console.log(error)
-            }
-        })
-    }
-
-    $(function () {
-        chat.client.GetCountInvitations = function (result) {
-            console.log(result)
-            spanCount.innerHTML = result
-        };
-    });
-
-
+    var urlGetAccount = '@Url.Action("GetAccount", "Account")'
+    var urlGetExpense = '@Url.Action("GetExpenses", "Account")'
+    var urlInsertExpense = '@Url.Action("InsertExpense", "Account")'
+    var urlDeleteExpense = '@Url.Action("DeleteExpense", "Account")'
 </script>
+
+<script src="~/Scripts/accounts.js"></script>
+<script src="~/Scripts/dashboard.js"></script>
+<script src="~/Scripts/account.js"></script>

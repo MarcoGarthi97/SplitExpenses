@@ -137,22 +137,29 @@ namespace SplitExpenses.Controllers
 
             var expenses = mongo.GetExpenses(((Account)Session["Account"]).Id).Result;
 
-            foreach (var expense in expenses)
+            try
             {
-                double amount = expense.Cost - (expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1));
-                amount = Math.Round(amount, 2);
-
-                var user = result.Find(x => x.Name == expense.PaidBy);
-                result[result.IndexOf(user)].Balance += amount;
-
-                foreach (var userPaidFor in expense.PaidFor)
+                foreach (var expense in expenses)
                 {
-                    amount = expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1);
+                    double amount = expense.Cost - (expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1));
                     amount = Math.Round(amount, 2);
 
-                    user = result.Find(x => x.Name == userPaidFor);
-                    result[result.IndexOf(user)].Balance -= amount;
+                    var user = result.Find(x => x.Name == expense.PaidBy);
+                    result[result.IndexOf(user)].Balance += amount;
+
+                    foreach (var userPaidFor in expense.PaidFor)
+                    {
+                        amount = expense.Cost / Convert.ToDouble(expense.PaidFor.Count + 1);
+                        amount = Math.Round(amount, 2);
+
+                        user = result.Find(x => x.Name == userPaidFor);
+                        result[result.IndexOf(user)].Balance -= amount;
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+
             }
 
             return result;
