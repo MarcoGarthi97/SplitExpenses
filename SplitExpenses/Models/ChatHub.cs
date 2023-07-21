@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR;
+using MongoDB.Bson;
 using SplitExpenses.Controllers;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,16 @@ namespace SplitExpenses.Models
             var invitations = await mongo.GetCountInvitations(LoginController._username);
 
             Clients.User(username).GetCountInvitations(invitations.Count);
+        }
+
+        public async Task ReloadExpenses(string username)
+        {
+            Clients.User(username).GetExpenses();
+        }
+
+        public async Task ReloadBalance(string username)
+        {
+            Clients.User(username).GetBalance();
         }
     }
 }

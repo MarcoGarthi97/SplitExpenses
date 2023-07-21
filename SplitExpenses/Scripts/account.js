@@ -36,7 +36,6 @@ $(document).ready(function () {
         $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
     }
 
-
     function GetAccount() {
         $.ajax({
             url: urlGetAccount,
@@ -59,6 +58,68 @@ $(document).ready(function () {
                 GetAccount()
             }
         })
+    }
+
+    function GetBalance(){
+        $.ajax({
+            url: urlGetBalance,
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    CreateBalance(result)
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function CreateBalance(balance){
+        $("#divBalance").remove()
+
+        var positive = 0
+        var negative = 0
+
+        balance.forEach(function(key){
+            if(key.Balance > 0)
+                positive += key.Balance
+            else
+                negative += key.Balance
+        })
+
+        var list = []
+        var perc
+
+        balance.forEach(function(key){
+            if(key.Balance > 0)
+                perc = key.Balance * 100 / positive
+            else
+                perc = key.Balance * 100 / negative
+
+            key.Perc = perc.toFixed(2)
+
+            list.push(key)
+        })
+
+        list.sort((a, b) => b.Balance - a.Balance)
+        
+        var row = ""
+        var classCss = ""
+        list.forEach(function(key){
+            if(key.Balance > 0)
+                classCss = 'colored-bar-green'
+            else
+                classCss = 'colored-bar-red'
+
+            var b = key.Balance.toFixed(2)
+
+            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss +'" style="width: ' + key.Perc +'%;"></div></div><div class="col-2"><p>Balance: ' + b +'</p></div></div>'
+        })
+
+        row = '<div id="divBalance">' + row + '<div>'
+        $('#footer').append(row)
     }
 
     function InsertOptionToSelectPaid() {
@@ -178,7 +239,8 @@ $(document).ready(function () {
             }
         }
         else if (e.target.className.split(' ')[2] == "btnAccounts") {
-            const timer = setTimeout(GetAccount, 1000);
+            const timer1 = setTimeout(GetAccount, 1000);
+            const timer2 = setTimeout(GetBalance, 1000);
         }
     })
 })

@@ -4,16 +4,15 @@ $(document).ready(function () {
 
     var idIncremental
 
+    var chat = $.connection.chatHub;
 
-
-    function GetAccounts() {
+    function GetBalance(){
         $.ajax({
-            url: urlGetAccounts,
+            url: urlGetBalance,
             type: "POST",
             success: function (result) {
                 if (result != "") {
-                    accounts = result
-                    CreateTable(accounts)
+                    CreateBalance(result)
                 }
             },
             error: function (error) {
@@ -23,27 +22,50 @@ $(document).ready(function () {
         })
     }
 
-    function CreateTable(accounts) {
-        const element = document.getElementById('tbody')
-        if (element != null)
-            element.remove()
+    function CreateBalance(balance){
+        $("#divBalance").remove()
 
-        var rows = ""
-        accounts.forEach(function (item) {
-            var users = ""
-            item.Users.forEach(function (key) {
-                if (JSON.stringify(item.Users.slice(-1)) === JSON.stringify(Object.is(key)))
-                    users += key.Name
-                else
-                    users += key.Name + " - "
-            })
-            rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
-                + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
-                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
-                + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
+        var positive = 0
+        var negative = 0
+
+        balance.forEach(function(key){
+            if(key.Balance > 0)
+                positive += key.Balance
+            else
+                negative += key.Balance
         })
 
-        $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
+        var list = []
+        var perc
+
+        balance.forEach(function(key){
+            if(key.Balance > 0)
+                perc = key.Balance * 100 / positive
+            else
+                perc = key.Balance * 100 / negative
+
+            key.Perc = perc.toFixed(2)
+
+            list.push(key)
+        })
+
+        list.sort((a, b) => b.Balance - a.Balance)
+        
+        var row = ""
+        var classCss = ""
+        list.forEach(function(key){
+            if(key.Balance > 0)
+                classCss = 'colored-bar-green'
+            else
+                classCss = 'colored-bar-red'
+
+            var b = key.Balance.toFixed(2)
+
+            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss +'" style="width: ' + key.Perc +'%;"></div></div><div class="col-2"><p>Balance: ' + b +'</p></div></div>'
+        })
+
+        row = '<div id="divBalance">' + row + '<div>'
+        $('#footer').append(row)
     }
 
     $(document).on('keyup', '#txtFilter', function () {
@@ -207,4 +229,14 @@ $(document).ready(function () {
             users.splice(index, 1)
         }
     })
+
+    $(function () {
+        chat.client.getExpenses = function () {
+            GetExpenses()
+        };
+
+        chat.client.getBalance = function () {
+            GetBalance()
+        };
+    });
 })

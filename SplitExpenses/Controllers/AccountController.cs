@@ -1,7 +1,10 @@
-﻿using SplitExpenses.Models;
+﻿using Microsoft.AspNet.SignalR;
+using MongoDB.Bson;
+using SplitExpenses.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -28,7 +31,7 @@ namespace SplitExpenses.Controllers
             return Json(((Account)Session["Account"]));
         }
 
-        public JsonResult InsertExpense(string name, string cost, DateTime date, string owner, List<string> usersFor)
+        public async Task<JsonResult> InsertExpense(string name, string cost, DateTime date, string owner, List<string> usersFor)
         {
             try
             {
@@ -52,6 +55,8 @@ namespace SplitExpenses.Controllers
 
                 RecalculateAll();
 
+                await ReloadExpenses(expense);
+
                 return Json(true);
             }
             catch (Exception ex)
@@ -60,7 +65,7 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public JsonResult DeleteExpense(int id)
+        public async Task<JsonResult> DeleteExpense(int id)
         {
             try
             {
@@ -73,6 +78,8 @@ namespace SplitExpenses.Controllers
                         var delete = mongo.DeleteExpense(expense.Id);
 
                         RecalculateAll();
+
+                        await ReloadExpenses(expense);
 
                         return Json(true);
                     }
@@ -98,6 +105,32 @@ namespace SplitExpenses.Controllers
             }
 
             return null;
+        }
+
+        public async Task<JsonResult> GetBalanceUsers()
+        {
+            if (!Authentication())
+                return Json("");
+
+            var mongo = new Mongo();
+            var account = await mongo.GetAccount(((Account)Session["Account"]).Id);
+
+            return Json(account.Users);
+        }
+
+        private async Task ReloadExpenses(Expense expense)
+        {
+            var mongo = new Mongo();
+
+            var users = expense.PaidFor;
+            users.Add(expense.PaidBy);
+
+            foreach (var user in users)
+            {
+                var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                context.Clients.User(user).GetExpenses();
+                context.Clients.User(user).GetBalance();
+            }
         }
 
         private void RecalculateAll()

@@ -1,6 +1,8 @@
 ﻿ToDo:
 
-- Fare una cosa simile alle notifiche quando un utente aggiunge una spese, anche agli altri deve comparire
-- Fixare i numeri dopo la virgola
-- Fare un vista che si possano vedere il balance degli utenti
+- Fixare i numeri dopo la virgola (messo una pezza nel js, ma sarebbe meglio farlo lato beckend)
 - Testare la registrazione
+- Creare il modale per le notifiche
+- Guardare se tutte le operazioni di modifica funzionano
+- Se ancora non si è accetto l'invito non si può aggiunge quell'utente nelle spese
+- Sistemare le date

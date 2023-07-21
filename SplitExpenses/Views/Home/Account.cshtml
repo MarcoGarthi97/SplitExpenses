@@ -2,34 +2,76 @@
     ViewBag.Title = "Home Page";
 }
 
+<style>
+    /* CSS personalizzato per il footer */
+    .toBotton {
+        bottom: 0;
+        height: 20vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
-<div class="row">
+    .fixed-height-div {
+        height: 70vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 10px;
+    }
+
+    .colored-bar {
+        height: 20px;
+        /* Altezza della barra */
+    }
+
+    .colored-bar-green {
+        background-color: #0D6EFD;
+        /* Colore della barra */
+    }
+
+    .colored-bar-red {
+        background-color: #DC3545;
+        /* Colore della barra */
+    }
+
+    body {
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+</style>
+
+<div class="row" id="divAccountExpenses">
     <div class="row">
         <div class="col">
             <h2 id="pNameAccount"></h2>
         </div>
     </div>
     <hr>
-    <div class="row">
-        <div class="col">
-            <button class="btn btn-primary" id="btnModalExpense"data-bs-toggle="modal"
-                data-bs-target="#modalAddExpense">+</button>
+    <div class="fixed-height-div">
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" id="btnModalExpense" data-bs-toggle="modal"
+                    data-bs-target="#modalAddExpense">+</button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-dark" id="tableExpenses">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Paid by</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Import</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
-    <div class="row">
-        <table class="table table-dark" id="tableExpenses">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Paid by</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Import</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-        </table>
+    <div class="toBotton" id="footer">
     </div>
 </div>
+
+
 
 <div class="modal fade" id="modalAddExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="modalAddLabel" aria-hidden="true">

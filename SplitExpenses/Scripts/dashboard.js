@@ -62,7 +62,7 @@ $(document).ready(function () {
                 else
                     users += key.Name + " - "
             })
-            rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses + "</td><td>" + item.TotalExpenses + "</td><td>" + users
+            rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses.toFixed(2) + "</td><td>" + item.TotalExpenses.toFixed(2) + "</td><td>" + users
                 + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
                 + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
                 + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
@@ -94,7 +94,6 @@ $(document).ready(function () {
 
     $(function () {
         chat.client.GetCountInvitations = function (result) {
-            console.log(result)
             spanCount.innerHTML = result
         };
     });
