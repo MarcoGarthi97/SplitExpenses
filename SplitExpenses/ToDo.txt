@@ -4,5 +4,7 @@
 - Testare la registrazione
 - Creare il modale per le notifiche
 - Guardare se tutte le operazioni di modifica funzionano
-- Se ancora non si è accetto l'invito non si può aggiunge quell'utente nelle spese
+- Se ancora non si è accettato l'invito non si può aggiunge quell'utente nelle spese
 - Sistemare le date
+- Click automatico sulla dashboard
+- Logout

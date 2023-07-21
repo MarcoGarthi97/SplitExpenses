@@ -254,6 +254,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InviteController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -275,7 +276,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\Logo.png" />
     <Content Include="libmongocrypt.so" />
     <Content Include="libmongocrypt.dylib" />
     <None Include="Properties\Settings.settings">
@@ -309,6 +309,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\" />
+    <Folder Include="Views\Invite\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

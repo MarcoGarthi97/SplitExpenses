@@ -187,7 +187,7 @@ $(document).ready(function () {
             var date = new Date(d).toLocaleDateString('en-GB')
             rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
                 + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
-                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
+                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div></tr>'
         })
 
         $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')

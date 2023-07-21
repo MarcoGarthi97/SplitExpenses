@@ -43,17 +43,22 @@
         <div class="modal-content bg-dark">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="modalAddLabel">Invites</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close closeModalInvites" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
-                    <div class="row" id="divInvite">
-
-                    </div>
-                </form>
+                <table class="table table-dark" id="tableInvites">
+                    <thead>
+                        <tr>
+                            <th scope="col-5">Name</th>
+                            <th scope="col-5">Owner</th>
+                            <th scope="col-1"></th>
+                            <th scope="col-1"></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary closeModalInvites" id="btnCloseModal" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -62,6 +67,9 @@
 <script>
     var urlAccount = '@Url.Action("Account", "Home")'
     var urlAccounts = '@Url.Action("Accounts", "Home")'
+
+    var urlGetInvites = '@Url.Action("GetInvites", "Invite")'
+    var urlUpdateInvites = '@Url.Action("UpdateInvites", "Invite")'
 
     var urlGetAccounts = '@Url.Action("GetAccounts", "Dashboard")'
     var urlGetInfoUser = '@Url.Action("GetUser", "Dashboard")'

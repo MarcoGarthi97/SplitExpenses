@@ -12,6 +12,59 @@ $(document).ready(function () {
         LoadComponents()
     })
 
+    $('#btnNotification').on('click', function () {
+        $('#modalInviteAccount').modal('show')
+        Getinvites()
+    })
+
+    function Getinvites() {
+        $.ajax({
+            url: urlGetInvites,
+            type: "POST",
+            success: function (result) {
+                if(result != "")
+                    CreateModalComponents(result)
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function CreateModalComponents(invites) {
+        $('#tbodyInvites').remove()
+        
+        var row = ''
+        invites.forEach(function (key) {
+            var owner = key.Users.find(x => x.Owner == true).Name
+
+            row += '<tr><td>' + key.Name + '</td><td>' + owner + '</td><td><button type="button" class="btn btn-danger btnDeleteInvites" id="btnDeleteInvite_' + key.Id.Increment 
+            + '">X</button></td><td><button class="btn btn-primary btnAcceptInvites" id="btnAcceptInvite_' + key.Id.Increment + '">></button></td></tr>'
+        })
+
+        row = '<tbody id="tbodyInvites">' + row + '</tbody>'
+        $('#tableInvites').append(row)
+    }
+
+    $(document).on('click', '.btnAcceptInvites', function(e){
+        var idIncremental = e.target.id.substring(16)
+        console.log(idIncremental)
+        $.ajax({
+            url: urlUpdateInvites,
+            type: "POST",
+            data: {idIncremental: idIncremental, val: 1},
+            success: function (result) {
+                if(result)
+                    Getinvites()
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    })
+
     function LoadComponents() {
         $('#divLoadComponent').empty()
 

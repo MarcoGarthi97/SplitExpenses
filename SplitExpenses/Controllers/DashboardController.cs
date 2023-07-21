@@ -22,12 +22,17 @@ namespace SplitExpenses.Controllers
                 var mongo = new Mongo();
                 var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;
 
+                var listAccounts = new List<Account>();
                 foreach (var account in accounts)
                 {
-                    accounts.Find(x => x.Id == account.Id).UserExpenses = account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Balance;
+                    if(account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Invitation == 1)
+                    {
+                        accounts.Find(x => x.Id == account.Id).UserExpenses = account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Balance;
+                        listAccounts.Add(account);
+                    }
                 }
 
-                return Json(accounts);
+                return Json(listAccounts);
             }
             catch (Exception ex)
             {
@@ -122,7 +127,7 @@ namespace SplitExpenses.Controllers
                 if (Authentication())
                 {
                     var account = CheckAccount(idIncremental);
-                    if (account != null)
+                    if (account != null && account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Invitation == 1)
                     {
                         var mongo = new Mongo();
                         var delete = mongo.DeleteAccount(account.Id).Result;

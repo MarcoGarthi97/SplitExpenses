@@ -181,7 +181,7 @@ namespace SplitExpenses.Models
 
                 //var filter = Builders<Account>.Filter.Eq(x => x.Users.Contains(username), username);
 
-                var filter = Builders<Account>.Filter.ElemMatch(x => x.Users, u => u.Name == username && u.Invitation == 1);
+                var filter = Builders<Account>.Filter.ElemMatch(x => x.Users, u => u.Name == username);
 
                 var listAccount = accounts.Find(filter).ToList();
 
@@ -245,6 +245,29 @@ namespace SplitExpenses.Models
                 var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
 
                 var update = Builders<Account>.Update.Set(x => x.Users, account.Users).Set(x => x.TotalExpenses, account.TotalExpenses);
+
+                var updateResult = accounts.UpdateOne(filter, update);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return false;
+            }
+        }
+
+        internal async Task<bool> UpdateAccount(List<UsersAccount> users, Object id)
+        {
+            try
+            {
+                IMongoDatabase splitExpenses = GetDatabase();
+                IMongoCollection<Account> accounts = splitExpenses.GetCollection<Account>("Account");
+
+                var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
+
+                var update = Builders<Account>.Update.Set(x => x.Users, users);
 
                 var updateResult = accounts.UpdateOne(filter, update);
 
