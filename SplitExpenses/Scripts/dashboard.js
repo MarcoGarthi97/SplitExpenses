@@ -22,6 +22,7 @@ $(document).ready(function () {
             url: urlGetInvites,
             type: "POST",
             success: function (result) {
+                $('#tbodyInvites').remove()
                 if(result != "")
                     CreateModalComponents(result)
             },
@@ -33,8 +34,6 @@ $(document).ready(function () {
     }
 
     function CreateModalComponents(invites) {
-        $('#tbodyInvites').remove()
-        
         var row = ''
         invites.forEach(function (key) {
             var owner = key.Users.find(x => x.Owner == true).Name
@@ -49,7 +48,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.btnAcceptInvites', function(e){
         var idIncremental = e.target.id.substring(16)
-        console.log(idIncremental)
+        
         $.ajax({
             url: urlUpdateInvites,
             type: "POST",
@@ -63,6 +62,28 @@ $(document).ready(function () {
                 console.log(error)
             }
         })
+    })
+
+    $(document).on('click', '.btnDeleteInvites', function(e){
+        var idIncremental = e.target.id.substring(16)
+        
+        $.ajax({
+            url: urlUpdateInvites,
+            type: "POST",
+            data: {idIncremental: idIncremental, val: 0},
+            success: function (result) {
+                if(result)
+                    Getinvites()
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    })
+
+    $('.closeModalInvites').on('click', function(){
+        GetAccounts()
     })
 
     function LoadComponents() {
@@ -80,8 +101,6 @@ $(document).ready(function () {
                 console.log(error)
             }
         })
-        //var url = '@Url.Action("Accounts", "Home")'
-        //$('#divLoadComponent').html(url)
     }
 
     function GetAccounts() {

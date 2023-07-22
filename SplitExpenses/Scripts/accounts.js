@@ -6,6 +6,46 @@ $(document).ready(function () {
 
     var chat = $.connection.chatHub;
 
+    function GetAccounts() {
+        $.ajax({
+            url: urlGetAccounts,
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    accounts = result
+                    CreateTable(accounts)
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    }
+
+    function CreateTable(accounts) {
+        const element = document.getElementById('tbody')
+        if (element != null)
+            element.remove()
+
+        var rows = ""
+        accounts.forEach(function (item) {
+            var users = ""
+            item.Users.forEach(function (key) {
+                if (JSON.stringify(item.Users.slice(-1)) === JSON.stringify(Object.is(key)))
+                    users += key.Name
+                else
+                    users += key.Name + " - "
+            })
+            rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses.toFixed(2) + "</td><td>" + item.TotalExpenses.toFixed(2) + "</td><td>" + users
+                + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
+        })
+
+        $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
+    }
+
     function GetBalance(){
         $.ajax({
             url: urlGetBalance,
@@ -166,7 +206,7 @@ $(document).ready(function () {
             success: function (result) {
                 if (result != "") {
                     console.log(result)
-                    CreateTable(result)
+                    CreateTableExpenses(result)
                 }
             },
             error: function (error) {
@@ -176,15 +216,19 @@ $(document).ready(function () {
         })
     }
 
-    function CreateTable(expenses) {
+    function CreateTableExpenses(expenses) {
         const element = document.getElementById('tbody')
         if (element != null)
             element.remove()
 
         var rows = ""
         expenses.forEach(function (item) {
-            var d = item.Date.substring(9, 13)
-            var date = new Date(d).toLocaleDateString('en-GB')
+            var d = item.Date.substring(7, 19)
+            var date = new Date(d)
+            console.log(item)
+            console.log(item.Date)
+            console.log(d)
+            console.log(date)
             rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
                 + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
                 + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div></tr>'

@@ -159,7 +159,7 @@ $(document).ready(function () {
     }
 
     $(document).click(function (e) {
-        if (e.target.id == "btnAddUser") {
+        if (e.target.id == "btnAddUserSelect") {
             var val = $('#selectSearch').val()
             if (val != "" && !users.find(x => x == val)) {
                 users.push(val)
