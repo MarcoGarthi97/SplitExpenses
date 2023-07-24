@@ -2,13 +2,14 @@ $(document).ready(function () {
     var users = []
     var usersFor = []
 
+    var idIncremental = 0
+
     function GetExpenses() {
         $.ajax({
-            url: urlGetExpense,
+            url: urlGetExpenses,
             type: "POST",
             success: function (result) {
                 if (result != "") {
-                    console.log(result)
                     CreateTable(result)
                 }
             },
@@ -26,11 +27,12 @@ $(document).ready(function () {
 
         var rows = ""
         expenses.forEach(function (item) {
-            var d = item.Date.substring(9, 13)
+            var d = parseInt(item.Date.substring(6, 19))
             var date = new Date(d).toLocaleDateString('en-GB')
+
             rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
-                + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
-                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div>'
+                + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="X"/></div>'
+                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="?"/></div>'
         })
 
         $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
@@ -44,6 +46,7 @@ $(document).ready(function () {
                 if (result != "") {
                     console.log(result)
                     $('#pNameAccount').text(result.Name)
+                    users = []
 
                     result.Users.forEach(function (key) {
                         users.push(key)
@@ -55,12 +58,11 @@ $(document).ready(function () {
             error: function (error) {
                 console.log("error")
                 console.log(error)
-                GetAccount()
             }
         })
     }
 
-    function GetBalance(){
+    function GetBalance() {
         $.ajax({
             url: urlGetBalance,
             type: "POST",
@@ -76,14 +78,14 @@ $(document).ready(function () {
         })
     }
 
-    function CreateBalance(balance){
+    function CreateBalance(balance) {
         $("#divBalance").remove()
 
         var positive = 0
         var negative = 0
 
-        balance.forEach(function(key){
-            if(key.Balance > 0)
+        balance.forEach(function (key) {
+            if (key.Balance > 0)
                 positive += key.Balance
             else
                 negative += key.Balance
@@ -92,8 +94,8 @@ $(document).ready(function () {
         var list = []
         var perc
 
-        balance.forEach(function(key){
-            if(key.Balance > 0)
+        balance.forEach(function (key) {
+            if (key.Balance > 0)
                 perc = key.Balance * 100 / positive
             else
                 perc = key.Balance * 100 / negative
@@ -104,18 +106,18 @@ $(document).ready(function () {
         })
 
         list.sort((a, b) => b.Balance - a.Balance)
-        
+
         var row = ""
         var classCss = ""
-        list.forEach(function(key){
-            if(key.Balance > 0)
+        list.forEach(function (key) {
+            if (key.Balance > 0)
                 classCss = 'colored-bar-green'
             else
                 classCss = 'colored-bar-red'
 
             var b = key.Balance.toFixed(2)
 
-            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss +'" style="width: ' + key.Perc +'%;"></div></div><div class="col-2"><p>Balance: ' + b +'</p></div></div>'
+            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss + '" style="width: ' + key.Perc + '%;"></div></div><div class="col-2"><p>Balance: ' + b + '</p></div></div>'
         })
 
         row = '<div id="divBalance">' + row + '<div>'
@@ -123,6 +125,8 @@ $(document).ready(function () {
     }
 
     function InsertOptionToSelectPaid() {
+        $('#selectPaid').empty()
+
         var option = '<option value""></option>'
         users.forEach(function (key) {
             option += '<option value"' + key.Name + '">' + key.Name + '</option>'
@@ -132,6 +136,10 @@ $(document).ready(function () {
     }
 
     $(document).on('change', '#selectPaid', function () {
+        LoadSelectPaid()
+    })
+
+    function LoadSelectPaid(){
         var val = $('#selectPaid').val()
         if (val != '') {
             usersFor = []
@@ -141,7 +149,7 @@ $(document).ready(function () {
             })
             InsertOptionToSelectFor(usersFor)
         }
-    })
+    }
 
     function InsertOptionToSelectFor(usersFor) {
         $('#selectFor').empty()
@@ -180,28 +188,53 @@ $(document).ready(function () {
         usersFor.forEach(function (key) {
             listUsers.push(key.Name)
         })
-        
+
         if (name != '' && cost != '' && cost != '0' && d != '') {
-            $.ajax({
-                url: urlInsertExpense,
-                data: { name: name, cost: cost, date: d, owner: owner, usersFor: listUsers },
-                type: "POST",
-                success: function (result) {
-                    if (result) {
-                        console.log(result)
-                        $('#btnCloseModal').click()
-                        GetExpenses()
+            if (idIncremental == 0) {
+                $.ajax({
+                    url: urlInsertExpense,
+                    data: { name: name, cost: cost, date: d, owner: owner, usersFor: listUsers },
+                    type: "POST",
+                    success: function (result) {
+                        if (result) {
+                            $('#btnCloseModal').click()
+                            GetExpenses()
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error.responseText)
                     }
-                },
-                error: function (error) {
-                    console.log("error")
-                    console.log(error.responseText)
-                }
-            })
+                })
+            }
+            else {
+                $.ajax({
+                    url: urlUpdateExpense,
+                    data: { idIncremental: idIncremental, name: name, cost: cost, date: d, owner: owner, usersFor: listUsers },
+                    type: "POST",
+                    success: function (result) {
+                        if (result) {
+                            $('#btnCloseModal').click()
+                            GetExpenses()
+
+                            $('#txtName').val('')
+                            $('#numberCost').val('')
+                            $('#date').val('')
+                            $('#selectPaid').val('')
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error.responseText)
+                    }
+                })
+            }
         }
     })
 
-    $(document).on('click', '#btnModalExpense', function (e) {   
+    $(document).on('click', '#btnModalExpense', function (e) {
+        GetAccount()
+
         var now = new Date();
 
         var day = ("0" + now.getDate()).slice(-2);
@@ -221,22 +254,60 @@ $(document).ready(function () {
         }
         else if (e.target.className.split(' ').find(x => x == 'btnDeleteExpenses')) {
             if (confirm("Are you sure delete the account?") == true) {
-                var idIncremental = e.target.id.substring(10)
+                idIncremental = e.target.id.substring(10)
                 $.ajax({
                     url: urlDeleteExpense,
-                    data: { id: idIncremental },
+                    data: { idIncremental: idIncremental },
                     type: "POST",
                     success: function (result) {
                         if (result) {
                             GetExpenses()
                         }
+
+                        idIncremental = 0
                     },
                     error: function (error) {
                         console.log("error")
                         console.log(error)
+
+                        idIncremental = 0
                     }
                 })
             }
+        }
+        else if (e.target.className.split(' ').find(x => x == 'btnInfoExpenses')) {
+            idIncremental = e.target.id.substring(8)
+
+            $.ajax({
+                url: urlGetExpense,
+                data: { idIncremental: idIncremental },
+                type: "POST",
+                success: function (result) {
+                    var expense = result
+                    if (result = ! "") {
+                        console.log(expense)
+                        $('#txtName').val(expense.Name)
+                        $('#numberCost').val(expense.Cost)
+
+                        var username = expense.PaidBy.toLowerCase()
+                        console.log(username)
+                        $("#selectPaid option[value='" + username + "']").prop("selected", true);
+                        //$('#selectPaid').val(username)
+
+                        //LoadSelectPaid()
+
+                        var d = parseInt(expense.Date.substring(6, 19))
+                        var date = new Date(d).toISOString().slice(0, 10)
+                        $('#date').val(date)
+
+                        $('#modalAddExpense').modal('show')
+                    }
+                },
+                error: function (error) {
+                    console.log("error")
+                    console.log(error)
+                }
+            })
         }
         else if (e.target.className.split(' ')[2] == "btnAccounts") {
             const timer1 = setTimeout(GetAccount, 1000);

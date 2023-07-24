@@ -21,6 +21,10 @@ namespace SplitExpenses.Models
         public string Country { get; set; }
         public string LevelUser { get; set; }
 
+        public User()
+        {
+        }
+
         public User(string username, string password)
         {
             Username = username;
@@ -39,6 +43,16 @@ namespace SplitExpenses.Models
             Country = country;
             LevelUser = levelUser;
         }
+
+        public User(string username, string password, string email, string name, DateTime birthday, string gender)
+        {
+            Username = username;
+            Password = password;
+            Email = email;
+            Name = name;
+            Birthday = birthday;
+            Gender = gender;
+        }
     }
 
     public class Account
@@ -50,6 +64,15 @@ namespace SplitExpenses.Models
         [BsonIgnoreIfDefault]
         public double UserExpenses { get; set; }
         public double TotalExpenses { get; set; }
+
+        public Account()
+        {
+        }
+
+        public Account(string name)
+        {
+            Name = name;
+        }
 
         public Account(List<UsersAccount> users, double totalExpenses)
         {
@@ -69,6 +92,18 @@ namespace SplitExpenses.Models
             Name = name;
             TotalExpenses = totalExpenses;
         }
+
+        public Account Clone()
+        {
+            return new Account
+            {
+                Id = this.Id,
+                Users = new List<UsersAccount>(this.Users),
+                Name = this.Name,
+                UserExpenses = this.UserExpenses,
+                TotalExpenses = this.TotalExpenses
+            };
+        }
     }
 
     public class UsersAccount
@@ -84,11 +119,17 @@ namespace SplitExpenses.Models
         [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
         public ObjectId FatherId { get; set; }
+        [BsonIgnoreIfDefault]
         public string Name { get; set; }
+        [BsonIgnoreIfDefault]
         public string Category { get; set; }
+        [BsonIgnoreIfDefault]
         public DateTime Date { get; set; }
+        [BsonIgnoreIfDefault]
         public string PaidBy { get; set; }
+        [BsonIgnoreIfDefault]
         public List<string> PaidFor { get; set; }
+        [BsonIgnoreIfDefault]
         public double Cost { get; set; }
 
         public Expense(ObjectId fatherId, string name, DateTime date, string paidBy, List<string> paidFor, double cost)

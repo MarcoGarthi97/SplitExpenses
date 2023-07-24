@@ -6,8 +6,6 @@ $(document).ready(function () {
     var _user = ''
     var chat = $.connection.chatHub;
 
-    //$("#btnDashboard").trigger("click");
-
     btnDashboard.addEventListener('click', function () {
         LoadComponents()
     })
@@ -17,13 +15,29 @@ $(document).ready(function () {
         Getinvites()
     })
 
+    $('#btnLogout').on('click', function () {
+        $.ajax({
+            url: urlLogout,
+            type: "POST",
+            success: function () {
+                window.location.href = urlIndex
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
+    })
+
     function Getinvites() {
+        chat.server.notify(_user)
+
         $.ajax({
             url: urlGetInvites,
             type: "POST",
             success: function (result) {
                 $('#tbodyInvites').remove()
-                if(result != "")
+                if (result != "")
                     CreateModalComponents(result)
             },
             error: function (error) {
@@ -38,23 +52,23 @@ $(document).ready(function () {
         invites.forEach(function (key) {
             var owner = key.Users.find(x => x.Owner == true).Name
 
-            row += '<tr><td>' + key.Name + '</td><td>' + owner + '</td><td><button type="button" class="btn btn-danger btnDeleteInvites" id="btnDeleteInvite_' + key.Id.Increment 
-            + '">X</button></td><td><button class="btn btn-primary btnAcceptInvites" id="btnAcceptInvite_' + key.Id.Increment + '">></button></td></tr>'
+            row += '<tr><td>' + key.Name + '</td><td>' + owner + '</td><td><button type="button" class="btn btn-danger btnDeleteInvites" id="btnDeleteInvite_' + key.Id.Increment
+                + '">X</button></td><td><button class="btn btn-primary btnAcceptInvites" id="btnAcceptInvite_' + key.Id.Increment + '">></button></td></tr>'
         })
 
         row = '<tbody id="tbodyInvites">' + row + '</tbody>'
         $('#tableInvites').append(row)
     }
 
-    $(document).on('click', '.btnAcceptInvites', function(e){
+    $(document).on('click', '.btnAcceptInvites', function (e) {
         var idIncremental = e.target.id.substring(16)
-        
+
         $.ajax({
             url: urlUpdateInvites,
             type: "POST",
-            data: {idIncremental: idIncremental, val: 1},
+            data: { idIncremental: idIncremental, val: 1 },
             success: function (result) {
-                if(result)
+                if (result)
                     Getinvites()
             },
             error: function (error) {
@@ -64,15 +78,15 @@ $(document).ready(function () {
         })
     })
 
-    $(document).on('click', '.btnDeleteInvites', function(e){
+    $(document).on('click', '.btnDeleteInvites', function (e) {
         var idIncremental = e.target.id.substring(16)
-        
+
         $.ajax({
             url: urlUpdateInvites,
             type: "POST",
-            data: {idIncremental: idIncremental, val: 0},
+            data: { idIncremental: idIncremental, val: 0 },
             success: function (result) {
-                if(result)
+                if (result)
                     Getinvites()
             },
             error: function (error) {
@@ -82,7 +96,7 @@ $(document).ready(function () {
         })
     })
 
-    $('.closeModalInvites').on('click', function(){
+    $('.closeModalInvites').on('click', function () {
         GetAccounts()
     })
 
@@ -136,7 +150,7 @@ $(document).ready(function () {
             })
             rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses.toFixed(2) + "</td><td>" + item.TotalExpenses.toFixed(2) + "</td><td>" + users
                 + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
-                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="?"/>'
                 + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
         })
 
@@ -156,6 +170,8 @@ $(document).ready(function () {
                 $.connection.hub.start().done(function () {
                     chat.server.notify(_user)
                 });
+
+                LoadComponents()
             },
             error: function (error) {
                 console.log("error")

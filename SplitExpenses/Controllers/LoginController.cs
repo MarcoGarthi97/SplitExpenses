@@ -31,20 +31,27 @@ namespace SplitExpenses.Controllers
         
         public JsonResult Register(string json)
         {
-            var user = JsonConvert.DeserializeObject<User>(json);
-
-            Mongo mongo = new Mongo();
-            var findUser = mongo.CheckUser(user.Username).Result;
-
-            if (!findUser)
+            try
             {
-                var insert = mongo.InsertUser(user).Result;
-                if (insert)
-                {
-                    var result = Logon(user.Username, user.Password);
+                var user = JsonConvert.DeserializeObject<User>(json);
 
-                    return Json(result);
+                Mongo mongo = new Mongo();
+                var findUser = mongo.CheckUser(user.Username).Result;
+
+                if (!findUser)
+                {
+                    var insert = mongo.InsertUser(user).Result;
+                    if (insert)
+                    {
+                        var result = Logon(user.Username, user.Password);
+
+                        return Json(result);
+                    }
+
                 }
+            }
+            catch (Exception ex)
+            {
 
             }
             

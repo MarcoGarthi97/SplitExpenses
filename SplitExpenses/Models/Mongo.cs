@@ -244,9 +244,16 @@ namespace SplitExpenses.Models
 
                 var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
 
-                var update = Builders<Account>.Update.Set(x => x.Users, account.Users).Set(x => x.TotalExpenses, account.TotalExpenses);
-
-                var updateResult = accounts.UpdateOne(filter, update);
+                if(account.Users != null)
+                {
+                    var update = Builders<Account>.Update.Set(x => x.Users, account.Users).Set(x => x.TotalExpenses, account.TotalExpenses);
+                    var updateResult = accounts.UpdateOne(filter, update);
+                }
+                else
+                {
+                    var update = Builders<Account>.Update.Set(x => x.Name, account.Name);
+                    var updateResult = accounts.UpdateOne(filter, update);
+                }
 
                 return true;
             }
@@ -368,16 +375,22 @@ namespace SplitExpenses.Models
             }
         }
 
-        internal async Task<bool> UpdateExpense(Expense expense)
+        internal async Task<bool> UpdateExpense(Expense expense, ObjectId id)
         {
             try
             {
                 IMongoDatabase splitExpenses = GetDatabase();
                 IMongoCollection<Expense> expenses = splitExpenses.GetCollection<Expense>("Expenses");
 
-                var filter = Builders<Expense>.Filter.Eq(x => x.Id, expense.Id);
+                var filter = Builders<Expense>.Filter.Eq(x => x.Id, id);
 
-                var update = Builders<Expense>.Update.Set(x => x, expense);
+                var update = Builders<Expense>.Update.Set("FatherId", expense.FatherId)
+                                    .Set("Name", expense.Name)
+                                    .Set("Category", expense.Category)
+                                    .Set("Date", expense.Date)
+                                    .Set("PaidBy", expense.PaidBy)
+                                    .Set("PaidFor", expense.PaidFor)
+                                    .Set("Cost", expense.Cost);
                 var updateResult = expenses.UpdateOne(filter, update);
 
                 return true;

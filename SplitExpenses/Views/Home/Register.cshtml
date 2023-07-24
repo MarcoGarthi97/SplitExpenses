@@ -76,12 +76,20 @@
     const btnRegister = document.getElementById('register')
 
     btnRegister.addEventListener('click', function (e) {
-        var username = txtUsername.value
+        /*var username = txtUsername.value
         var password = txtPassword.value
         var name = txtName.value
         var mail = txtMail.value
         var gender = selectGender.value
-        var birthday = dateBirthday.value
+        var birthday = dateBirthday.value*/
+
+        
+        var username = 'NikGabuks'
+        var password = '123456'
+        var name = 'Nicola Gaburri'
+        var mail = 'n.gaburri@gmail.com'
+        var gender = 'Other'
+        var birthday = '1988-01-22'
 
         if (username != "" && password != "" && name != "" && mail != "" && gender != "" && birthday != "") {
             if (username.length > 5) {
@@ -91,7 +99,8 @@
                         data: { username: username },
                         type: "POST",
                         success: function (result) {
-                            if (!result) {
+                            console.log(result)
+                            if (!result.Result) {
                                 var obj = {}
                                 obj.Username = username
                                 obj.Password = password

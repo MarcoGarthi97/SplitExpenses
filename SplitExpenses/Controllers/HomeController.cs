@@ -74,6 +74,13 @@ namespace SplitExpenses.Controllers
             return View("Login");
         }
 
+        public JsonResult Logout()
+        {
+            Session.Clear();
+
+            return Json(true);
+        }
+
         public bool Authentication()
         {
             try

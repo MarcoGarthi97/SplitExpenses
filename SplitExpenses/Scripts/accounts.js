@@ -1,8 +1,9 @@
 $(document).ready(function () {
     var accounts = []
+    var account
     var users = []
 
-    var idIncremental
+    var idIncremental = 0
 
     var chat = $.connection.chatHub;
 
@@ -39,14 +40,14 @@ $(document).ready(function () {
             })
             rows += "<tr><td>" + item.Name + "</td><td>" + item.UserExpenses.toFixed(2) + "</td><td>" + item.TotalExpenses.toFixed(2) + "</td><td>" + users
                 + '</td><td><input type="button" class="btn btn-outline-danger btnDeleteAccounts" id="btnDelete_' + item.Id.Increment + '" value="X"/>'
-                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="!"/>'
+                + '</td><td><input type="button" class="btn btn-outline-primary btnInfoAccounts" id="btnInfo_' + item.Id.Increment + '" value="?"/>'
                 + '</td><td><input type="button" class="btn btn-outline-primary btnAccounts" id="btn_' + item.Id.Increment + '" value=">"/></td></tr>'
         })
 
         $('#tableAccounts').append('<tbody id="tbody">' + rows + '</tbody>')
     }
 
-    function GetBalance(){
+    function GetBalance() {
         $.ajax({
             url: urlGetBalance,
             type: "POST",
@@ -62,24 +63,24 @@ $(document).ready(function () {
         })
     }
 
-    function CreateBalance(balance){
+    function CreateBalance(balance) {
         $("#divBalance").remove()
 
         var positive = 0
         var negative = 0
 
-        balance.forEach(function(key){
-            if(key.Balance > 0)
+        balance.forEach(function (key) {
+            if (key.Balance > 0)
                 positive += key.Balance
             else
-                negative += key.Balance
+                negative -= key.Balance
         })
 
         var list = []
         var perc
 
-        balance.forEach(function(key){
-            if(key.Balance > 0)
+        balance.forEach(function (key) {
+            if (key.Balance > 0)
                 perc = key.Balance * 100 / positive
             else
                 perc = key.Balance * 100 / negative
@@ -90,18 +91,18 @@ $(document).ready(function () {
         })
 
         list.sort((a, b) => b.Balance - a.Balance)
-        
+
         var row = ""
         var classCss = ""
-        list.forEach(function(key){
-            if(key.Balance > 0)
+        list.forEach(function (key) {
+            if (key.Balance > 0)
                 classCss = 'colored-bar-green'
             else
                 classCss = 'colored-bar-red'
 
             var b = key.Balance.toFixed(2)
 
-            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss +'" style="width: ' + key.Perc +'%;"></div></div><div class="col-2"><p>Balance: ' + b +'</p></div></div>'
+            row += '<div class="row"><div class="col-1"><p>' + key.Name + '</p></div><div class="col-9"><div class="colored-bar ' + classCss + '" style="width: ' + key.Perc + '%;"></div></div><div class="col-2"><p>Balance: ' + b + '</p></div></div>'
         })
 
         row = '<div id="divBalance">' + row + '<div>'
@@ -141,46 +142,79 @@ $(document).ready(function () {
     $(document).click(function (e) {
         if (e.target.id == "btnAddUser") {
             var val = $('#selectSearch').val()
-            if (val != "" && !users.find(x => x == val)) {
-                users.push(val)
-
-                var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-danger btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
-                $('#divUsers').append(html)
-            }
+            CreateTableUsers(val)
         }
     })
 
+    function CreateTableUsers(val) {
+        console.log(val)
+
+        if (val != "" && !users.find(x => x == val)) {
+            users.push(val)
+
+            var html = '<div class="col-6" id="divUser_' + val + '"><div class="row"><div class="col-10"><p>' + val + '</p></div><div class="col-2"><input type="button" class="btn btn-outline-danger btnDeleteUsers" id="btnDeleteUser_' + val + '" value="x"></div></div></div>'
+            $('#divUsers').append(html)
+        }
+    }
+
     $(document).on('click', '#btnAddAccount', function (e) {
         var name = $('#txtName').val()
-        console.log(users)
+
         if (name != "") {
-            $.ajax({
-                url: urlInsertAccount,
-                data: { name: name, users: users },
-                type: "POST",
-                success: function (result) {
-                    if (result != "") {
-                        accounts = result
-                        CreateTable(accounts)
+            if (idIncremental == 0) {
+                $.ajax({
+                    url: urlInsertAccount,
+                    data: { name: name, users: users },
+                    type: "POST",
+                    success: function (result) {
+                        if (result != "") {
+                            accounts = result
+                            CreateTable(accounts)
 
-                        $('#btnCloseModal').click()
+                            $('#btnCloseModal').click()
 
-                        $('#txtName').value = ""
-                        users = []
+                            $('#txtName').val('')
+                            users = []
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
                     }
-                },
-                error: function (error) {
-                    console.log("error")
-                    console.log(error)
-                }
-            })
+                })
+            }
+            else {
+                $.ajax({
+                    url: urlUpdateAccount,
+                    data: { name: name, idIncremental: idIncremental },
+                    type: "POST",
+                    success: function (result) {
+                        if (result != "") {
+                            
+                            GetAccounts()
+
+                            $('#btnCloseModal').click()
+
+                            $('#txtName').val('')
+                            $('#divUsers').empty()
+
+                            users = []
+                            idIncremental = 0
+                        }
+                    },
+                    error: function (error) {
+                        console.log("error")
+                        console.log(error)
+                    }
+                })
+            }
         }
         else
             alert('Insert the name of new account')
     })
 
     $(document).on('click', '#btnDeleteAccount', function () {
-        console.log(idIncremental)
+
         $.ajax({
             url: urlDeleteAccount,
             data: { idIncremental: idIncremental },
@@ -198,14 +232,14 @@ $(document).ready(function () {
             }
         })
     })
-    
+
     function GetExpenses() {
         $.ajax({
-            url: urlGetExpense,
+            url: urlGetExpenses,
             type: "POST",
             success: function (result) {
                 if (result != "") {
-                    console.log(result)
+
                     CreateTableExpenses(result)
                 }
             },
@@ -223,18 +257,45 @@ $(document).ready(function () {
 
         var rows = ""
         expenses.forEach(function (item) {
-            var d = item.Date.substring(7, 19)
-            var date = new Date(d)
-            console.log(item)
-            console.log(item.Date)
-            console.log(d)
-            console.log(date)
+            var d = parseInt(item.Date.substring(6, 19))
+            var date = new Date(d).toLocaleDateString('en-GB')
+
             rows += "<tr><td>" + item.Name + "</td><td>" + item.PaidBy + "</td><td>" + date + "</td><td>" + item.Cost
-                + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="Delete"/></div>'
-                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="Info"/></div></tr>'
+                + '</td><td><div class="row"><div class="col"><input type="button" class="btn btn-outline-danger btnDeleteExpenses" id="btnDelete_' + item.Id.Increment + '" value="X"/></div>'
+                + '<div class="col"><input type="button" class="btn btn-outline-primary btnInfoExpenses" id="btnInfo_' + item.Id.Increment + '" value="?"/></div></tr>'
         })
 
         $('#tableExpenses').append('<tbody id="tbody">' + rows + '</tbody>')
+    }
+
+    function GetAccount() {
+        $.ajax({
+            url: urlGetAccountInfo,
+            data: { idIncremental: idIncremental },
+            type: "POST",
+            success: function (result) {
+                if (result != "") {
+                    console.log(result)
+                    account = result
+
+                    $('#modalAddAccount').modal('show')
+
+                    if (idIncremental > 0) {
+                        $('#txtName').val(account.Name)
+
+                        account.Users.forEach(function (val) {
+                            CreateTableUsers(val.Name)
+                        })
+                    }
+                    
+                    $('#div-controll-users :input').children().prop('disabled', true)
+                }
+            },
+            error: function (error) {
+                console.log("error")
+                console.log(error)
+            }
+        })
     }
 
     document.addEventListener('click', function (e) {
@@ -264,9 +325,14 @@ $(document).ready(function () {
 
             $('#modalDeleteAccount').modal('show')
         }
+        else if (e.target.className.split(' ')[2] == "btnInfoAccounts") {
+            idIncremental = e.target.id.substring(8)
+
+            GetAccount()
+        }
         else if (e.target.className.split(' ').find(x => x == "btnDeleteUsers")) {
             var username = e.target.id.substring(14)
-            console.log(username)
+
             $('#divUser_' + username).remove()
 
             var index = users.indexOf(username)

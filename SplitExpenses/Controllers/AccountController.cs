@@ -23,12 +23,16 @@ namespace SplitExpenses.Controllers
             return Json(expenses);
         }
 
-        public JsonResult GetAccount()
+        public JsonResult GetExpense(int idIncremental)
         {
-            if (!Authentication())
-                return Json("");
+            if (Authentication())
+            {
+                var expense = CheckEspense(idIncremental);
+                if (expense != null)
+                    return Json(expense);
+            }
 
-            return Json(((Account)Session["Account"]));
+            return Json("");
         }
 
         public async Task<JsonResult> InsertExpense(string name, string cost, DateTime date, string owner, List<string> usersFor)
@@ -65,13 +69,43 @@ namespace SplitExpenses.Controllers
             }
         }
 
-        public async Task<JsonResult> DeleteExpense(int id)
+        public async Task<JsonResult> UpdateExpense(int idIncremental, string name, string cost, DateTime date, string owner, List<string> usersFor)
         {
             try
             {
                 if (Authentication())
                 {
-                    var expense = CheckEspense(id);
+                    var expenseCheck = CheckEspense(idIncremental);
+                    if (expenseCheck != null)
+                    {
+                        var expense = new Expense(expenseCheck.FatherId, name, date, owner, usersFor, Convert.ToDouble(cost));
+
+                        var mongo = new Mongo();
+                        var update = mongo.UpdateExpense(expense, expenseCheck.Id);
+
+                        RecalculateAll();
+
+                        await ReloadExpenses(expense);
+
+                        return Json(true);
+                    }
+                }
+
+                return Json(false);
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+            }
+        }
+
+        public async Task<JsonResult> DeleteExpense(int idIncremental)
+        {
+            try
+            {
+                if (Authentication())
+                {
+                    var expense = CheckEspense(idIncremental);
                     if (expense != null)
                     {
                         var mongo = new Mongo();

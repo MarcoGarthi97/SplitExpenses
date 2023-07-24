@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace SplitExpenses.Controllers
 {
@@ -38,6 +39,41 @@ namespace SplitExpenses.Controllers
             {
                 return Json("");
             }
+        }
+
+        public JsonResult GetAccount()
+        {
+            if (!Authentication())
+                return Json("");
+
+            return Json(((Account)Session["Account"]));
+        }
+
+        public JsonResult GetAccountInfo(int idIncremental)
+        {
+            try
+            {
+                if (Authentication())
+                {
+                    var accountCheck = CheckAccount(idIncremental);
+                    if (accountCheck != null && accountCheck.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Invitation == 1)
+                    {
+                        var mongo = new Mongo();
+                        Session["Account"] = mongo.GetAccount(accountCheck.Id).Result;
+
+                        var account = ((Account)Session["Account"]).Clone();
+                        account.Users.RemoveAll(x => x.Invitation != 1 || x.Name == ((User)Session["InfoUser"]).Username);
+
+                        return Json(account);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return Json("");
         }
 
         public JsonResult GetUser()
@@ -119,6 +155,34 @@ namespace SplitExpenses.Controllers
             }
         }
 
+        public async Task<JsonResult> UpdateAccount(string name, int idIncremental)
+        {
+            try
+            {
+                if (Authentication())
+                {
+                    var account = CheckAccount(idIncremental);
+                    if (account != null && account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Invitation == 1)
+                    {
+                        var updateAccount = new Account(name);
+
+                        var mongo = new Mongo();
+                        var delete = mongo.UpdateAccount(updateAccount, account.Id).Result;
+
+                        await Notification(account.Users);
+
+                        if (delete)
+                            return Json(true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return Json(false);
+        }
 
         public async Task<JsonResult> DeleteAccount(int idIncremental)
         {
@@ -165,7 +229,7 @@ namespace SplitExpenses.Controllers
             return true;
         }
 
-        public Account CheckAccount(int idIncremental)
+        public Account CheckAccount(int? idIncremental)
         {
             var mongo = new Mongo();
             var accounts = mongo.GetAccounts(((User)Session["InfoUser"]).Username).Result;

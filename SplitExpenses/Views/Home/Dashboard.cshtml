@@ -22,7 +22,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a href="#" class="nav-link text-white" id="btnLogout">
                             Logout
                         </a>
                     </li>
@@ -33,7 +33,6 @@
     </div>
 
     <div class="col-10" style="margin-top: 1%;" id="divLoadComponent">
-
     </div>
 </div>
 
@@ -67,20 +66,26 @@
 <script>
     var urlAccount = '@Url.Action("Account", "Home")'
     var urlAccounts = '@Url.Action("Accounts", "Home")'
+    var urlLogout = '@Url.Action("Logout", "Home")'
+    var urlIndex = '@Url.Action("Index", "Home")'
 
     var urlGetInvites = '@Url.Action("GetInvites", "Invite")'
     var urlUpdateInvites = '@Url.Action("UpdateInvites", "Invite")'
 
+    var urlGetAccount = '@Url.Action("GetAccount", "Dashboard")'
+    var urlGetAccountInfo = '@Url.Action("GetAccountInfo", "Dashboard")'
     var urlGetAccounts = '@Url.Action("GetAccounts", "Dashboard")'
     var urlGetInfoUser = '@Url.Action("GetUser", "Dashboard")'
     var urlGetUsers = '@Url.Action("GetUsers", "Dashboard")'
     var urlDeleteAccount = '@Url.Action("DeleteAccount", "Dashboard")'
     var urlInsertAccount = '@Url.Action("InsertAccount", "Dashboard")'
+    var urlUpdateAccount = '@Url.Action("UpdateAccount", "Dashboard")'
 
-    var urlGetAccount = '@Url.Action("GetAccount", "Account")'
     var urlGetBalance = '@Url.Action("GetBalanceUsers", "Account")'
-    var urlGetExpense = '@Url.Action("GetExpenses", "Account")'
+    var urlGetExpense = '@Url.Action("GetExpense", "Account")'
+    var urlGetExpenses = '@Url.Action("GetExpenses", "Account")'
     var urlInsertExpense = '@Url.Action("InsertExpense", "Account")'
+    var urlUpdateExpense = '@Url.Action("UpdateExpense", "Account")'
     var urlDeleteExpense = '@Url.Action("DeleteExpense", "Account")'
 </script>
 
