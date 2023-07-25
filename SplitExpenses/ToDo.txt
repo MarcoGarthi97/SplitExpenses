@@ -2,6 +2,3 @@
 
 - Creare pagina di index quando si atterra nel sito
 - Fixare i numeri dopo la virgola (messo una pezza nel js, ma sarebbe meglio farlo lato beckend)
-- Disabilitare div per update
-- Aggiornare le operazioni di update su mongo come in "UpdateExpense"
-- Capire perché non mi valorizza la select "selectPaid" da js 

@@ -44,7 +44,6 @@ $(document).ready(function () {
             type: "POST",
             success: function (result) {
                 if (result != "") {
-                    console.log(result)
                     $('#pNameAccount').text(result.Name)
                     users = []
 
@@ -178,6 +177,16 @@ $(document).ready(function () {
         }
     })
 
+    $(document).on('click', '#btnCloseModal', function () {
+        $('#txtName').val('')
+        $('#numberCost').val('')
+        $('#date').val('')
+        $('#selectPaid').val('')
+        $('#divUsers').empty()
+
+        usersFor = []
+    })
+
     $(document).on('click', '#btnAddExpense', function (e) {
         var name = $('#txtName').val()
         var cost = $('#numberCost').val()
@@ -285,22 +294,17 @@ $(document).ready(function () {
                 success: function (result) {
                     var expense = result
                     if (result = ! "") {
-                        console.log(expense)
                         $('#txtName').val(expense.Name)
                         $('#numberCost').val(expense.Cost)
-
-                        var username = expense.PaidBy.toLowerCase()
-                        console.log(username)
-                        $("#selectPaid option[value='" + username + "']").prop("selected", true);
-                        //$('#selectPaid').val(username)
-
-                        //LoadSelectPaid()
 
                         var d = parseInt(expense.Date.substring(6, 19))
                         var date = new Date(d).toISOString().slice(0, 10)
                         $('#date').val(date)
 
                         $('#modalAddExpense').modal('show')
+
+                        $('#selectPaid').val(expense.PaidBy).change()
+                        LoadSelectPaid()
                     }
                 },
                 error: function (error) {

@@ -142,8 +142,8 @@ $(document).ready(function () {
         var rows = ""
         accounts.forEach(function (item) {
             var users = ""
-            item.Users.forEach(function (key) {
-                if (JSON.stringify(item.Users.slice(-1)) === JSON.stringify(Object.is(key)))
+            item.Users.forEach(function (key, index) {
+                if (index === item.Users.length - 1)
                     users += key.Name
                 else
                     users += key.Name + " - "

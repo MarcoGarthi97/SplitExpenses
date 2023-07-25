@@ -39,8 +39,11 @@ namespace SplitExpenses.Controllers
                     {
                         account.Users.Find(x => x.Name == ((User)Session["InfoUser"]).Username).Invitation = val;
 
+                        var accountforUpdate = new Account();
+                        accountforUpdate.Users = account.Users;
+
                         var mongo = new Mongo();
-                        var update = await mongo.UpdateAccount(account.Users, account.Id);
+                        var update = await mongo.UpdateAccount(accountforUpdate, account.Id);
 
                         if (update)
                             return Json(true);

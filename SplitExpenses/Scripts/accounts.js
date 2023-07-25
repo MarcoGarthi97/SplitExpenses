@@ -33,6 +33,7 @@ $(document).ready(function () {
         accounts.forEach(function (item) {
             var users = ""
             item.Users.forEach(function (key) {
+                console.log(key)
                 if (JSON.stringify(item.Users.slice(-1)) === JSON.stringify(Object.is(key)))
                     users += key.Name
                 else
@@ -147,8 +148,6 @@ $(document).ready(function () {
     })
 
     function CreateTableUsers(val) {
-        console.log(val)
-
         if (val != "" && !users.find(x => x == val)) {
             users.push(val)
 
@@ -275,7 +274,6 @@ $(document).ready(function () {
             type: "POST",
             success: function (result) {
                 if (result != "") {
-                    console.log(result)
                     account = result
 
                     $('#modalAddAccount').modal('show')
@@ -297,6 +295,12 @@ $(document).ready(function () {
             }
         })
     }
+
+    $(document).on('click', '.btnCloseModal', function () {
+        $('#div-controll-users').show()
+
+        idIncremental = 0
+    })
 
     document.addEventListener('click', function (e) {
         if (e.target.className.split(' ')[2] == "btnAccounts") {
@@ -327,6 +331,8 @@ $(document).ready(function () {
         }
         else if (e.target.className.split(' ')[2] == "btnInfoAccounts") {
             idIncremental = e.target.id.substring(8)
+
+            $('#div-controll-users').hide()
 
             GetAccount()
         }
