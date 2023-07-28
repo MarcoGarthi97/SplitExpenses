@@ -53,11 +53,15 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" id="password">
+                                <input type="password" name="password" class="form-control" id="password"> 
+                                <a href='@Url.Action("Login", "Home")'>Have an account?</a>
                             </div>
                         </div>
                     </div>
+                    <button type="button" id="homepage" class="btn btn-primary">←</button>
+                <div class="float-end">
                     <button type="button" id="register" class="btn btn-primary">Register</button>
+                </div>
                 </form>
             </div>
         </div>
@@ -74,22 +78,15 @@
     const dateBirthday = document.getElementById('birthday')
 
     const btnRegister = document.getElementById('register')
+    const btnHomePage = document.getElementById('homepage')
 
     btnRegister.addEventListener('click', function (e) {
-        /*var username = txtUsername.value
+        var username = txtUsername.value
         var password = txtPassword.value
         var name = txtName.value
         var mail = txtMail.value
         var gender = selectGender.value
-        var birthday = dateBirthday.value*/
-
-        
-        var username = 'NikGabuks'
-        var password = '123456'
-        var name = 'Nicola Gaburri'
-        var mail = 'n.gaburri@gmail.com'
-        var gender = 'Other'
-        var birthday = '1988-01-22'
+        var birthday = dateBirthday.value
 
         if (username != "" && password != "" && name != "" && mail != "" && gender != "" && birthday != "") {
             if (username.length > 5) {
@@ -110,7 +107,6 @@
                                 obj.Birthday = birthday
 
                                 var json = JSON.stringify(obj)
-console.log(json)
                                 $.ajax({
                                     url: '@Url.Action("Register", "Login")',
                                     data: { json: json },
@@ -141,5 +137,9 @@ console.log(json)
         }
         else
             alert("Fill in all fields")
+    })
+
+    btnHomePage.addEventListener('click', function () {
+        window.location.href = '@Url.Action("Index", "Home")'
     })
 </script>

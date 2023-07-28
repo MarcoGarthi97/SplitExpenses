@@ -276,6 +276,8 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\airport terminal-rafiki.svg" />
+    <Content Include="Images\angle-circle-right.svg" />
     <Content Include="libmongocrypt.so" />
     <Content Include="libmongocrypt.dylib" />
     <None Include="Properties\Settings.settings">
@@ -312,7 +314,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Images\" />
     <Folder Include="Views\Invite\" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -244,10 +245,21 @@ namespace SplitExpenses.Models
 
                 var filter = Builders<Account>.Filter.Eq(x => x.Id, id);
 
-                var update = Builders<Account>.Update.Set("Users", account.Users)
-                                    .Set("Name", account.Name)
-                                    .Set("UserExpenses", account.UserExpenses)
-                                    .Set("TotalExpenses", account.TotalExpenses);
+                var updateDefinition = new List<UpdateDefinition<Account>>();
+
+                if (account.Name != null)
+                    updateDefinition.Add(Builders<Account>.Update.Set("Name", account.Name));
+
+                if (account.UserExpenses != 0)
+                    updateDefinition.Add(Builders<Account>.Update.Set("UserExpenses", account.UserExpenses));
+
+                if (account.TotalExpenses != 0)
+                    updateDefinition.Add(Builders<Account>.Update.Set("TotalExpenses", account.TotalExpenses));
+
+                if (account.Users != null)
+                    updateDefinition.Add(Builders<Account>.Update.Set("Users", account.Users));
+
+                var update = Builders<Account>.Update.Combine(updateDefinition);
 
                 var updateResult = accounts.UpdateOne(filter, update);
 
@@ -357,13 +369,31 @@ namespace SplitExpenses.Models
 
                 var filter = Builders<Expense>.Filter.Eq(x => x.Id, id);
 
-                var update = Builders<Expense>.Update.Set("FatherId", expense.FatherId)
-                                    .Set("Name", expense.Name)
-                                    .Set("Category", expense.Category)
-                                    .Set("Date", expense.Date)
-                                    .Set("PaidBy", expense.PaidBy)
-                                    .Set("PaidFor", expense.PaidFor)
-                                    .Set("Cost", expense.Cost);
+                var updateDefinition = new List<UpdateDefinition<Expense>>();
+
+                if (expense.FatherId != null)
+                    updateDefinition.Add(Builders<Expense>.Update.Set("FatherId", expense.FatherId));
+
+                if (!string.IsNullOrEmpty(expense.Name))
+                    updateDefinition.Add(Builders<Expense>.Update.Set("Name", expense.Name));
+
+                if (!string.IsNullOrEmpty(expense.Category))
+                    updateDefinition.Add(Builders<Expense>.Update.Set("Category", expense.Category));
+
+                if (expense.Date != default(DateTime))
+                    updateDefinition.Add(Builders<Expense>.Update.Set("Date", expense.Date));
+
+                if (!string.IsNullOrEmpty(expense.PaidBy))
+                    updateDefinition.Add(Builders<Expense>.Update.Set("PaidBy", expense.PaidBy));
+
+                if (expense.PaidFor != null)
+                    updateDefinition.Add(Builders<Expense>.Update.Set("PaidFor", expense.PaidFor));
+
+                if (expense.Cost != 0)
+                    updateDefinition.Add(Builders<Expense>.Update.Set("Cost", expense.Cost));
+
+                var update = Builders<Expense>.Update.Combine(updateDefinition);
+
                 var updateResult = expenses.UpdateOne(filter, update);
 
                 return true;

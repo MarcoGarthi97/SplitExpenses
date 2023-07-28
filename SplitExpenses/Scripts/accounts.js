@@ -6,6 +6,10 @@ $(document).ready(function () {
     var idIncremental = 0
 
     var chat = $.connection.chatHub;
+    
+    $('.btnCloseModalInvite').on('click', function () {
+        GetAccounts()
+    })
 
     function GetAccounts() {
         $.ajax({

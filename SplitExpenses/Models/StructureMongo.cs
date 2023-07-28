@@ -60,6 +60,7 @@ namespace SplitExpenses.Models
         [BsonIgnoreIfDefault]
         public ObjectId Id { get; set; }
         public List<UsersAccount> Users { get; set; }
+        [BsonIgnoreIfDefault]
         public string Name { get; set; }
         [BsonIgnoreIfDefault]
         public double UserExpenses { get; set; }

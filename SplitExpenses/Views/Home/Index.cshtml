@@ -2,29 +2,268 @@
     ViewBag.Title = "Home Page";
 }
 
-
 <style>
-    .logo{
+    .logo {
         font-size: 32px;
+    }
+
+    .divContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rowCapter {
+        margin-top: 15%;
+    }
+
+    .vectorRow {
+        color: #3B71CA;
+        width: 110%;
+    }
+
+    .titleIndex {
+        color: #3B71CA;
+    }
+
+    .images {
+        width: 70%;
+    }
+
+    .card-text {
+        color: white;
+    }
+
+    .card {
+        width: 20rem;
+        /* 1 rem equivale a 16px (la dimensione di base del testo definita sopra) */
+        height: 30rem;
+        /* 1 rem equivale a 16px */
+        border-color: #3B71CA;
+    }
+
+    .card-img-top {
+        width: 100%;
+        /* Larghezza 100% della card */
+        height: 15rem;
+        /* Altezza fissa di 160px (10 rem) */
+        object-fit: cover;
+        /* Per mantenere l'aspetto dell'immagine, taglia l'immagine per adattarla alla sua altezza e larghezza fisse */
+    }
+
+    li.borderless {
+        border-top: 0 none;
     }
 </style>
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
     <div class="me-auto">
-            @Html.ActionLink("Spesamelo", "Index", "Home", new { area = "" }, new { @class = "navbar-brand logo" })
-        </div>
-        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Attiva/Disattiva spostamento" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">@Html.ActionLink("Login", "Login", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                <li class="nav-item">@Html.ActionLink("Register", "Register", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-            </ul>
-        </div>
+        @Html.ActionLink("Spesamelo", "Index", "Home", new { area = "" }, new { @class = "navbar-brand logo" })
+    </div>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+        title="Attiva/Disattiva spostamento" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">@Html.ActionLink("Login", "Login", "Home", new { area = "" }, new { @class = "nav-link"
+                })</li>
+            <li class="nav-item">@Html.ActionLink("Register", "Register", "Home", new { area = "" }, new { @class =
+                "nav-link" })</li>
+        </ul>
+    </div>
 </nav>
 
-<main>
-    
-</main>
+<div class="row divContainer">
+    <div class="container">
+        <div class="row">
+            <div class="col d-flex justify-content-center align-items-center">
+                <h1 class="titleIndex">Organize expenses.</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p>Make sharing expenses simple for travel, activities and daily life.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-center align-items-center">
+                    <input type="image" src="~/Images/Receipt-pana.svg" class="images" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-center align-items-center">
+                    <input type="image" src="~/Images/Receipt-cuate.svg" class="images" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row rowCapter">
+    <div class="col">
+        <div class="row">
+            <div class="row">
+                <h3 class="titleIndex">Simple</h3>
+            </div>
+            <div class="row">
+                <p>Just fill in the costs - and let the app do the maths for you.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <h3 class="titleIndex">Transparent</h3>
+            </div>
+            <div class="row">
+                <p>Nothing is hidden. All logged expenses are visible to the group, and everyone can add their own.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <h3 class="titleIndex">Collaborative</h3>
+            </div>
+            <div class="row">
+                <p>Tricount helps you share your lifestyle and brings you closer to friends, family and flatmates.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-center align-items-center">
+                    <input type="image" src="~/Images/airport terminal-rafiki.svg" class="images" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container rowCapter">
+    <div class="row text-center">
+        <div class="col">
+            <div class="card bg-dark">
+                <img src="~/Images/Couple-bro.svg" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title titleIndex">For Couples</h5>
+                    <p class="card-text">Keep your relationship fair and financially transparent. Track common expenses
+                        with
+                        your partner and split them evenly through Spesamelo.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark">
+                <img src="~/Images/ecotourism-rafiki.svg" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title titleIndex">For Travelers</h5>
+                    <p class="card-text">Whether you're on an exciting family getaway or a spontaneous city trip with
+                        friends, Tricount does the calculations so you can relax and enjoy your travels.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark">
+                <img src="~/Images/House restyling-cuate.svg" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title titleIndex">For Roommates</h5>
+                    <p class="card-text">Tricount splits household bills and daily expenses between roommates to make
+                        living
+                        together easy, honest and fair.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="rowCapter">
+    <div class="row text-center">
+        <h3 class="titleIndex">Spesamelo in 3 steps</h3>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <input type="image" src="~/Images/Chatting-cuate.svg" class="images" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col divContainer">
+            <div class="container">
+                <div class="row">
+                    <div class="row">
+                        <h3 class="titleIndex">Add your expenses</h3>
+                    </div>
+                    <div class="row">
+                        <p>✔ Enter the type of expense you are logging in Tricount. It could be tickets, food, fuel, shopping, or anything else.</p>
+                        <p>✔ Input the amount, and indicate who’s paying.</p>
+                        <p>✔ Invite participants to the group so they can log their own expenses and review what others have added.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col divContainer">
+            <div class="container">
+                <div class="row">
+                    <div class="row">
+                        <h3 class="titleIndex">Check your balance</h3>
+                    </div>
+                    <div class="row">
+                        <p>✔ View your balance at any time.</p>
+                        <p>✔ Money you are owed is highlighted in green with a (+) sign, money you owe to others is in red with a (-) sign.</p>
+                        <p>✔ With instant notifications, you’ll be updated whenever a group member adds, edits or deletes expenses.</p>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <div class="col">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <input type="image" src="~/Images/Finance app-rafiki.svg" class="images" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="container">
+                <div class="row">
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <input type="image" src="~/Images/Investment data-rafiki.svg" class="images" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col divContainer">
+            <div class="container">
+                <div class="row">
+                    <div class="row">
+                        <h3 class="titleIndex">Square Up</h3>
+                    </div>
+                    <div class="row">
+                        <p>✔ Let Tricount do the calculations - and determine who owes what. The app finds the most efficient way for everyone to pay each other what they owe.</p>
+                        <p>✔ Reimburse your fellow group members or mark your outstanding expenses as paid.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

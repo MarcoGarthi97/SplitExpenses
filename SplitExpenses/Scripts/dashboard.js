@@ -96,10 +96,6 @@ $(document).ready(function () {
         })
     })
 
-    $('.closeModalInvites').on('click', function () {
-        GetAccounts()
-    })
-
     function LoadComponents() {
         $('#divLoadComponent').empty()
 
